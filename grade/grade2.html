@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2ねんせい | さんすうの森</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="bg-wrapper">
+  <div class="bg-blob"></div><div class="bg-blob"></div><div class="bg-blob"></div>
+</div>
+<div class="grade-hero hero-g2">
+  <div class="hero-circle hero-circle-1"></div>
+  <div class="hero-circle hero-circle-2"></div>
+  <div class="hero-circle hero-circle-3"></div>
+  <a href="../index.html" class="back-btn">← もどる</a>
+  <span class="hero-mascot" id="heroMascot">🐰</span>
+  <div class="hero-grade">2 ねんせい</div>
+  <h1 class="hero-title">かけ算 マスター！</h1>
+  <div class="hero-progress">
+    <span class="prog-text" id="heroProgressText">よみこみちゅう…</span>
+    <div class="hero-progress-bar">
+      <div class="hero-progress-fill" id="heroProgressFill" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+<div class="chapters-container" id="chaptersContainer">
+  <div style="text-align:center;padding:40px;color:#b2bec3;font-weight:700;">📚 よみこみちゅう…</div>
+</div>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+  const GRADE_DATA = {"grade":2,"gradeTitle":"2ねんせい","heroTitle":"かけ算 マスター！","mascot":"🐰","heroClass":"hero-g2","chapters":[{"id":"c1","title":"大きなかず","icon":"🔢","lessons":[{"id":"2-1-1","title":"100までのかず","type":"lesson","duration":10},{"id":"2-1-2","title":"1000までのかず","type":"lesson","duration":12},{"id":"2-1-q","title":"大きなかずのテスト","type":"quiz","duration":5}]},{"id":"c2","title":"かけざん（九九）","icon":"✖️","lessons":[{"id":"2-2-1","title":"2・3・4のだん","type":"lesson","duration":15},{"id":"2-2-2","title":"5・6・7のだん","type":"lesson","duration":15},{"id":"2-2-3","title":"8・9・1のだん","type":"lesson","duration":15},{"id":"2-2-q","title":"九九マスターテスト","type":"quiz","duration":10}]},{"id":"c3","title":"長さとかさ","icon":"📏","lessons":[{"id":"2-3-1","title":"センチメートル・ミリメートル","type":"lesson","duration":12},{"id":"2-3-2","title":"メートル","type":"lesson","duration":10},{"id":"2-3-3","title":"デシリットル・リットル","type":"lesson","duration":10},{"id":"2-3-q","title":"長さとかさのテスト","type":"quiz","duration":5}]},{"id":"c4","title":"図形と時計","icon":"🕐","lessons":[{"id":"2-4-1","title":"三角形と四角形","type":"lesson","duration":12},{"id":"2-4-2","title":"時計のよみかた","type":"lesson","duration":10},{"id":"2-4-3","title":"時間と時こく","type":"lesson","duration":12},{"id":"2-4-q","title":"図形と時計のテスト","type":"quiz","duration":5}]}]};
+  document.addEventListener('DOMContentLoaded', () => renderGradePage(GRADE_DATA));
+</script>
+</body>
+</html>

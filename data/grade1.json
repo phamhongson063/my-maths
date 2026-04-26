@@ -1,0 +1,292 @@
+{
+  "grade": 1,
+  "gradeTitle": "1ねんせい",
+  "heroTitle": "はじめての さんすう",
+  "mascot": "🐣",
+  "heroClass": "hero-g1",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "かずとすうじ",
+      "icon": "🔢",
+      "lessons": [
+        {
+          "id": "1-1-1", "title": "1から5までのかず", "type": "lesson", "duration": 10,
+          "content": {
+            "intro": "1から5のかずを おぼえよう！",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "かずを かぞえよう 🍎",
+                "items": [
+                  {"visual": "🍎", "number": "1", "reading": "いち"},
+                  {"visual": "🍎🍎", "number": "2", "reading": "に"},
+                  {"visual": "🍎🍎🍎", "number": "3", "reading": "さん"},
+                  {"visual": "🍎🍎🍎🍎", "number": "4", "reading": "し・よん"},
+                  {"visual": "🍎🍎🍎🍎🍎", "number": "5", "reading": "ご"}
+                ]
+              }
+            ],
+            "keypoints": ["1・2・3・4・5 じゅんに おぼえよう", "かずが おおきい ほど たくさん あるよ"]
+          }
+        },
+        {
+          "id": "1-1-2", "title": "6から10までのかず", "type": "lesson", "duration": 10,
+          "content": {
+            "intro": "6から10のかずを おぼえよう！",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "かずを かぞえよう 🌟",
+                "items": [
+                  {"visual": "🌟🌟🌟🌟🌟🌟", "number": "6", "reading": "ろく"},
+                  {"visual": "🌟🌟🌟🌟🌟🌟🌟", "number": "7", "reading": "しち・なな"},
+                  {"visual": "🌟🌟🌟🌟🌟🌟🌟🌟", "number": "8", "reading": "はち"},
+                  {"visual": "🌟🌟🌟🌟🌟🌟🌟🌟🌟", "number": "9", "reading": "く・きゅう"},
+                  {"visual": "🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟", "number": "10", "reading": "じゅう"}
+                ]
+              }
+            ],
+            "keypoints": ["6・7・8・9・10 じゅんに おぼえよう", "10は 1と0で かくよ"]
+          }
+        },
+        {
+          "id": "1-1-3", "title": "10よりおおきいかず", "type": "lesson", "duration": 12,
+          "content": {
+            "intro": "10より おおきい かずを しろう！",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "じゅういく〜にじゅうを おぼえよう",
+                "items": [
+                  {"visual": "🔟＋1️⃣", "number": "11", "reading": "じゅういち"},
+                  {"visual": "🔟＋2️⃣", "number": "12", "reading": "じゅうに"},
+                  {"visual": "🔟＋5️⃣", "number": "15", "reading": "じゅうご"},
+                  {"visual": "🔟＋🔟", "number": "20", "reading": "にじゅう"}
+                ]
+              }
+            ],
+            "keypoints": ["じゅういちは 10と1を あわせた かず", "にじゅうは 10が 2こ"]
+          }
+        },
+        {
+          "id": "1-1-q", "title": "かずのかくにんテスト", "type": "quiz", "duration": 5,
+          "questions": [
+            {"text": "🍎🍎🍎 りんごは なんこ？", "choices": ["2こ", "3こ", "4こ", "5こ"], "answer": 1},
+            {"text": "⭐⭐⭐⭐⭐⭐⭐ ほしは いくつ？", "choices": ["5つ", "6つ", "7つ", "8つ"], "answer": 2},
+            {"text": "いちばん おおきい かずは どれ？", "choices": ["3", "7", "5", "2"], "answer": 1},
+            {"text": "4の つぎの かずは？", "choices": ["3", "4", "5", "6"], "answer": 2},
+            {"text": "10は なんと なんを あわせた かず？", "choices": ["5と4", "4と7", "5と5", "3と8"], "answer": 2}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "たしざん",
+      "icon": "➕",
+      "lessons": [
+        {
+          "id": "1-2-1", "title": "1けたのたしざん", "type": "lesson", "duration": 10,
+          "content": {
+            "intro": "たしざんは「あわせる」こと！",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "たしざんを やってみよう",
+                "items": [
+                  {"visual": "🐶 ➕ 🐶🐶", "number": "1 + 2 = 3", "reading": "いち たす に は さん"},
+                  {"visual": "🐱🐱 ➕ 🐱🐱🐱", "number": "2 + 3 = 5", "reading": "に たす さん は ご"},
+                  {"visual": "🐰🐰🐰 ➕ 🐰🐰🐰🐰", "number": "3 + 4 = 7", "reading": "さん たす し は なな"}
+                ]
+              }
+            ],
+            "keypoints": ["たしざんは ＋（プラス）を つかうよ", "あわせると かずが おおきく なるよ"]
+          }
+        },
+        {
+          "id": "1-2-2", "title": "あわせていくつ？", "type": "lesson", "duration": 10,
+          "content": {
+            "intro": "ぜんぶで いくつか かんがえよう！",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "もんだいを よんで かんがえよう",
+                "items": [
+                  {"visual": "🍬🍬 と 🍬🍬🍬", "number": "2 + 3 = 5", "reading": "あめが ぜんぶで 5こ"},
+                  {"visual": "🎈🎈🎈 と 🎈🎈🎈🎈", "number": "3 + 4 = 7", "reading": "ふうせんが ぜんぶで 7こ"}
+                ]
+              }
+            ],
+            "keypoints": ["「あわせて」「ぜんぶで」はたしざんのサイン", "おはじきで かぞえてみよう"]
+          }
+        },
+        {
+          "id": "1-2-3", "title": "ふえるといくつ？", "type": "lesson", "duration": 10,
+          "content": {
+            "intro": "ふえると かずが おおきくなるよ！",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "ふえる もんだいを といてみよう",
+                "items": [
+                  {"visual": "🐥🐥🐥 → 🐥🐥🐥🐥🐥", "number": "3 + 2 = 5", "reading": "ひよこが 2わ ふえて 5わ"},
+                  {"visual": "🌸🌸🌸🌸 → 🌸🌸🌸🌸🌸🌸🌸", "number": "4 + 3 = 7", "reading": "はなが 3こ ふえて 7こ"}
+                ]
+              }
+            ],
+            "keypoints": ["「ふえる」「もらう」もたしざんだよ", "たしざんは じゅんばんが かわっても こたえは おなじ"]
+          }
+        },
+        {
+          "id": "1-2-q", "title": "たしざんのかくにんテスト", "type": "quiz", "duration": 5,
+          "questions": [
+            {"text": "2 + 3 = ?", "choices": ["4", "5", "6", "7"], "answer": 1},
+            {"text": "りんごが 3こ あります。4こ もらいました。ぜんぶで なんこ？", "choices": ["5こ", "6こ", "7こ", "8こ"], "answer": 2},
+            {"text": "4 + 4 = ?", "choices": ["6", "7", "8", "9"], "answer": 2},
+            {"text": "1 + 6 = ?", "choices": ["5", "6", "7", "8"], "answer": 2},
+            {"text": "こうえんに こどもが 5にん います。3にん きました。ぜんぶで なんにん？", "choices": ["6にん", "7にん", "8にん", "9にん"], "answer": 2}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "ひきざん",
+      "icon": "➖",
+      "lessons": [
+        {
+          "id": "1-3-1", "title": "1けたのひきざん", "type": "lesson", "duration": 10,
+          "content": {
+            "intro": "ひきざんは「へらす」こと！",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "ひきざんを やってみよう",
+                "items": [
+                  {"visual": "🍎🍎🍎🍎🍎 ➖ 🍎🍎", "number": "5 - 2 = 3", "reading": "ご ひく に は さん"},
+                  {"visual": "🐠🐠🐠🐠🐠🐠🐠 ➖ 🐠🐠🐠", "number": "7 - 3 = 4", "reading": "なな ひく さん は し"},
+                  {"visual": "🌸🌸🌸🌸🌸🌸🌸🌸🌸 ➖ 🌸🌸🌸🌸", "number": "9 - 4 = 5", "reading": "く ひく し は ご"}
+                ]
+              }
+            ],
+            "keypoints": ["ひきざんは ー（マイナス）を つかうよ", "へらすと かずが ちいさく なるよ"]
+          }
+        },
+        {
+          "id": "1-3-2", "title": "のこりはいくつ？", "type": "lesson", "duration": 10,
+          "content": {
+            "intro": "のこりを かんがえよう！",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "のこりを もとめよう",
+                "items": [
+                  {"visual": "🍪🍪🍪🍪🍪 → たべた🍪🍪", "number": "5 - 2 = 3", "reading": "クッキーが 3まい のこった"},
+                  {"visual": "🎈🎈🎈🎈🎈🎈 → とんだ🎈🎈🎈", "number": "6 - 3 = 3", "reading": "ふうせんが 3こ のこった"}
+                ]
+              }
+            ],
+            "keypoints": ["「のこり」「まだある」はひきざんのサイン", "おおきい かずから ちいさい かずを ひくよ"]
+          }
+        },
+        {
+          "id": "1-3-3", "title": "ちがいはいくつ？", "type": "lesson", "duration": 10,
+          "content": {
+            "intro": "どちらが いくつ おおい？",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "くらべてみよう",
+                "items": [
+                  {"visual": "🐶🐶🐶🐶🐶 vs 🐱🐱🐱", "number": "5 - 3 = 2", "reading": "いぬは ねこより 2ひき おおい"},
+                  {"visual": "🍓🍓🍓🍓🍓🍓🍓 vs 🍊🍊🍊🍊", "number": "7 - 4 = 3", "reading": "いちごは みかんより 3こ おおい"}
+                ]
+              }
+            ],
+            "keypoints": ["「ちがい」「どちらがおおい」もひきざんだよ", "おおきい かずから ちいさい かずを ひくよ"]
+          }
+        },
+        {
+          "id": "1-3-q", "title": "ひきざんのかくにんテスト", "type": "quiz", "duration": 5,
+          "questions": [
+            {"text": "8 - 3 = ?", "choices": ["4", "5", "6", "7"], "answer": 1},
+            {"text": "クッキーが 7まい あります。3まい たべました。のこりは なんまい？", "choices": ["3まい", "4まい", "5まい", "6まい"], "answer": 1},
+            {"text": "10 - 4 = ?", "choices": ["5", "6", "7", "8"], "answer": 1},
+            {"text": "いちごが 6こ、りんごが 4こ あります。ちがいは なんこ？", "choices": ["1こ", "2こ", "3こ", "4こ"], "answer": 1},
+            {"text": "9 - 9 = ?", "choices": ["0", "1", "9", "18"], "answer": 0}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "title": "かたちとながさ",
+      "icon": "🔺",
+      "lessons": [
+        {
+          "id": "1-4-1", "title": "いろんなかたち", "type": "lesson", "duration": 12,
+          "content": {
+            "intro": "まわりにある かたちを しろう！",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "きほんの かたち",
+                "items": [
+                  {"visual": "🔵", "number": "まる（えん）", "reading": "ボール・おさら など"},
+                  {"visual": "🟥", "number": "しかく（せいほうけい）", "reading": "つみき・ハンカチ など"},
+                  {"visual": "🔺", "number": "さんかく（さんかくけい）", "reading": "おにぎり・やね など"}
+                ]
+              }
+            ],
+            "keypoints": ["まるは かどが ない", "しかくは かどが 4つ", "さんかくは かどが 3つ"]
+          }
+        },
+        {
+          "id": "1-4-2", "title": "ながさをくらべよう", "type": "lesson", "duration": 10,
+          "content": {
+            "intro": "どちらが ながい？くらべてみよう！",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "ながさの くらべかた",
+                "items": [
+                  {"visual": "📏", "number": "センチメートル（cm）", "reading": "ものさしで はかるよ"},
+                  {"visual": "✏️✏️✏️", "number": "えんぴつ3ほんぶん", "reading": "えんぴつで くらべることも できる"}
+                ]
+              }
+            ],
+            "keypoints": ["ながさは センチメートル（cm）で はかるよ", "はしを そろえて くらべよう"]
+          }
+        },
+        {
+          "id": "1-4-3", "title": "おもさをくらべよう", "type": "lesson", "duration": 10,
+          "content": {
+            "intro": "どちらが おもい？かんがえよう！",
+            "color": "#FF6B6B",
+            "sections": [
+              {
+                "heading": "おもさの くらべかた",
+                "items": [
+                  {"visual": "⚖️", "number": "てんびんで くらべる", "reading": "おもい ほうが さがるよ"},
+                  {"visual": "🏋️", "number": "グラム（g）・キログラム（kg）", "reading": "たいじゅうけいで はかるよ"}
+                ]
+              }
+            ],
+            "keypoints": ["おもさは グラム（g）で はかるよ", "1キログラム = 1000グラム"]
+          }
+        },
+        {
+          "id": "1-4-q", "title": "かたちのかくにんテスト", "type": "quiz", "duration": 5,
+          "questions": [
+            {"text": "🔺 このかたちは なに？", "choices": ["まる", "しかく", "さんかく", "ながしかく"], "answer": 2},
+            {"text": "さんかくけいの かどは いくつ？", "choices": ["2つ", "3つ", "4つ", "5つ"], "answer": 1},
+            {"text": "ながさを はかる きごうは？", "choices": ["kg", "cm", "L", "g"], "answer": 1},
+            {"text": "てんびんで おもい ほうは どうなる？", "choices": ["うえにあがる", "よこにうごく", "したにさがる", "かわらない"], "answer": 2},
+            {"text": "ボールは どの かたち？", "choices": ["さんかく", "しかく", "まる", "ながしかく"], "answer": 2}
+          ]
+        }
+      ]
+    }
+  ]
+}

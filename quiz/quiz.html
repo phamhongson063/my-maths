@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>テスト | さんすうの森</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .quiz-page { max-width: 680px; margin: 0 auto; padding: 0 20px 80px; }
+
+    .quiz-hero {
+      border-radius: 0 0 40px 40px;
+      padding: 80px 24px 36px;
+      text-align: center;
+      position: relative;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    .quiz-hero .back-btn { top: 16px; left: 16px; }
+    .quiz-hero-icon { font-size: 4.5rem; display: block; margin-bottom: 10px; animation: mascotFloat 3s ease-in-out infinite; }
+    .quiz-hero-title { font-size: 1.7rem; font-weight: 900; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.15); margin-bottom: 20px; }
+
+    /* Progress bar */
+    .quiz-progress-row { display: flex; align-items: center; gap: 12px; }
+    .quiz-progress-track { flex: 1; height: 14px; background: rgba(255,255,255,0.3); border-radius: 999px; overflow: hidden; }
+    .quiz-progress-fill { height: 100%; background: rgba(255,255,255,0.9); border-radius: 999px; transition: width 0.4s ease; }
+    .quiz-progress-label { font-size: 1rem; font-weight: 800; color: rgba(255,255,255,0.9); white-space: nowrap; }
+
+    /* Question card */
+    .question-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 28px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      padding: 36px 28px 32px;
+      margin-bottom: 20px;
+      animation: cardIn 0.35s ease both;
+    }
+    .question-number {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #b2bec3;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .question-text {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 900;
+      color: #2d3436;
+      line-height: 1.4;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    /* Choices grid */
+    .choices-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .choice-btn {
+      padding: 24px 12px;
+      border-radius: 20px;
+      border: 3px solid #f1f2f6;
+      background: #f8f9fa;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #2d3436;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      font-family: 'Nunito', sans-serif;
+    }
+    .choice-btn:hover:not(:disabled) {
+      border-color: currentColor;
+      transform: scale(1.03);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .choice-btn.correct {
+      background: #f0fff6;
+      border-color: #26de81;
+      color: #20bf6b;
+      animation: correctPop 0.4s ease;
+    }
+    .choice-btn.wrong {
+      background: #fff5f5;
+      border-color: #FF6B6B;
+      color: #e55353;
+      animation: wrongShake 0.4s ease;
+    }
+    .choice-btn:disabled { cursor: not-allowed; }
+
+    /* Feedback */
+    .feedback-box {
+      margin-top: 20px;
+      padding: 20px 24px;
+      border-radius: 16px;
+      font-size: 1.3rem;
+      font-weight: 800;
+      text-align: center;
+      animation: cardIn 0.3s ease;
+      display: none;
+    }
+    .feedback-box.correct { background: #f0fff6; color: #20bf6b; display: block; }
+    .feedback-box.wrong   { background: #fff5f5; color: #e55353; display: block; }
+
+    /* Next button */
+    .next-btn {
+      display: block;
+      width: 100%;
+      margin-top: 16px;
+      padding: 22px;
+      border-radius: 20px;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      transition: transform 0.2s, opacity 0.2s;
+      display: none;
+    }
+    .next-btn:hover { transform: translateY(-2px); opacity: 0.92; }
+
+    @keyframes correctPop {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+    @keyframes wrongShake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-8px); }
+      75%      { transform: translateX(8px); }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-wrapper">
+  <div class="bg-blob"></div><div class="bg-blob"></div><div class="bg-blob"></div>
+</div>
+
+<div id="quizHero" class="quiz-hero hero-g1">
+  <div class="hero-circle hero-circle-1"></div>
+  <div class="hero-circle hero-circle-2"></div>
+  <a id="backBtn" href="../grade/grade1.html" class="back-btn">← もどる</a>
+  <span class="quiz-hero-icon" id="heroIcon">📝</span>
+  <div class="quiz-hero-title" id="heroTitle">かくにんテスト</div>
+  <div class="quiz-progress-row">
+    <div class="quiz-progress-track"><div class="quiz-progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="quiz-progress-label" id="progressLabel">0 / 0</div>
+  </div>
+</div>
+
+<div class="quiz-page">
+  <div id="quizArea">
+    <div class="question-card" style="text-align:center;color:#b2bec3;font-weight:700;padding:40px">📚 よみこみちゅう…</div>
+  </div>
+</div>
+
+<script src="../assets/js/storage.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const grade  = params.get('grade') || '1';
+const qid    = params.get('qid');
+
+const HERO_CLASSES = ['','hero-g1','hero-g2','hero-g3','hero-g4','hero-g5','hero-g6'];
+const COLORS       = ['','#FF6B6B','#FF9F43','#26de81','#45aaf2','#a29bfe','#fd79a8'];
+
+let questions = [], currentQ = 0, score = 0, answered = false;
+const color = COLORS[+grade] || '#FF6B6B';
+
+async function loadQuiz() {
+  let data;
+  try {
+    const res = await fetch(`../data/grade${grade}.json`);
+    data = await res.json();
+  } catch {
+    document.getElementById('heroTitle').textContent = 'データが みつかりません';
+    return;
+  }
+
+  // Find quiz lesson
+  let quiz = null, chapterIdx = 0;
+  data.chapters.forEach((ch, ci) => {
+    ch.lessons.forEach(l => {
+      if (l.id === qid && l.type === 'quiz') { quiz = l; chapterIdx = ci; }
+    });
+  });
+
+  if (!quiz || !quiz.questions) {
+    location.href = `../grade/grade${grade}.html`;
+    return;
+  }
+
+  document.getElementById('quizHero').className = `quiz-hero ${HERO_CLASSES[+grade] || 'hero-g1'}`;
+  document.getElementById('heroIcon').textContent = data.chapters[chapterIdx].icon;
+  document.getElementById('heroTitle').textContent = quiz.title;
+  document.getElementById('backBtn').href = `../grade/grade${grade}.html`;
+  document.title = `${quiz.title} | さんすうの森`;
+
+  questions = quiz.questions;
+  renderQuestion();
+}
+
+function updateProgress() {
+  const pct = questions.length > 0 ? Math.round((currentQ / questions.length) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${currentQ} / ${questions.length}`;
+}
+
+function renderQuestion() {
+  updateProgress();
+  if (currentQ >= questions.length) {
+    showResult();
+    return;
+  }
+
+  const q = questions[currentQ];
+  answered = false;
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="question-card">
+      <div class="question-number">もんだい ${currentQ + 1} / ${questions.length}</div>
+      <div class="question-text">${q.text}</div>
+      <div class="choices-grid" id="choicesGrid">
+        ${q.choices.map((ch, i) => `
+          <button class="choice-btn" data-idx="${i}" onclick="answer(${i})">${ch}</button>
+        `).join('')}
+      </div>
+      <div class="feedback-box" id="feedbackBox"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()" style="background:linear-gradient(135deg,${color},${color}bb)">
+        ${currentQ + 1 < questions.length ? 'つぎの もんだい →' : '🏆 けっかを みる！'}
+      </button>
+    </div>
+  `;
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[currentQ];
+  const buttons = document.querySelectorAll('.choice-btn');
+  const feedback = document.getElementById('feedbackBox');
+  const nextBtn  = document.getElementById('nextBtn');
+
+  buttons.forEach(btn => btn.disabled = true);
+
+  if (idx === q.answer) {
+    score++;
+    buttons[idx].classList.add('correct');
+    feedback.className = 'feedback-box correct';
+    feedback.textContent = '⭐ せいかい！ すごい！';
+  } else {
+    buttons[idx].classList.add('wrong');
+    buttons[q.answer].classList.add('correct');
+    feedback.className = 'feedback-box wrong';
+    feedback.textContent = `❌ ざんねん… こたえは「${q.choices[q.answer]}」だよ！`;
+  }
+
+  nextBtn.style.display = 'block';
+}
+
+function nextQuestion() {
+  currentQ++;
+  renderQuestion();
+}
+
+function showResult() {
+  updateProgress();
+  const stars = score === questions.length ? 3 : score >= Math.ceil(questions.length * 0.6) ? 2 : 1;
+  AppStorage.completeLesson(grade, qid, stars);
+  location.href = `../result/result.html?grade=${grade}&qid=${qid}&score=${score}&total=${questions.length}&stars=${stars}`;
+}
+
+loadQuiz();
+</script>
+</body>
+</html>

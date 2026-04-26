@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>けっか | さんすうの森</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .result-page { max-width: 600px; margin: 0 auto; padding: 40px 20px 80px; text-align: center; }
+
+    .result-hero {
+      border-radius: 0 0 40px 40px;
+      padding: 60px 24px 48px;
+      text-align: center;
+      position: relative;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+    .result-mascot { font-size: 8rem; display: block; margin-bottom: 14px; animation: mascotFloat 2s ease-in-out infinite; }
+    .result-title { font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 900; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+    .result-subtitle { font-size: 1.2rem; font-weight: 700; color: rgba(255,255,255,0.85); margin-top: 8px; }
+
+    /* Stars display */
+    .stars-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 28px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      padding: 36px 28px;
+      margin-bottom: 16px;
+      animation: cardIn 0.4s ease both;
+    }
+    .stars-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .star-big {
+      font-size: 5rem;
+      animation: sparkle 1.2s ease infinite;
+      display: inline-block;
+    }
+    .star-big:nth-child(1) { animation-delay: 0s; }
+    .star-big:nth-child(2) { animation-delay: 0.2s; }
+    .star-big:nth-child(3) { animation-delay: 0.4s; }
+    .star-big.empty { filter: grayscale(1); opacity: 0.25; animation: none; }
+
+    .score-display {
+      font-size: 4.5rem;
+      font-weight: 900;
+      color: #2d3436;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .score-label { font-size: 1.2rem; font-weight: 700; color: #636e72; }
+
+    /* Message */
+    .result-message {
+      margin-top: 20px;
+      padding: 20px 24px;
+      border-radius: 16px;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #2d3436;
+      background: #f8f9fa;
+      line-height: 1.5;
+    }
+
+    /* Confetti items */
+    .confetti-wrap { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 10; }
+    .confetti-piece {
+      position: absolute;
+      top: -20px;
+      font-size: 1.5rem;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Action buttons */
+    .action-btns { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+    .btn-primary {
+      display: block;
+      padding: 22px;
+      border-radius: 20px;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #fff;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      transition: transform 0.2s;
+      text-align: center;
+    }
+    .btn-primary:hover { transform: translateY(-3px); }
+    .btn-row { display: flex; gap: 12px; }
+    .btn-secondary {
+      flex: 1;
+      display: block;
+      padding: 20px;
+      border-radius: 18px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #636e72;
+      background: #f1f2f6;
+      text-decoration: none;
+      text-align: center;
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover { background: #dfe6e9; }
+  </style>
+</head>
+<body>
+<div class="bg-wrapper">
+  <div class="bg-blob"></div><div class="bg-blob"></div><div class="bg-blob"></div>
+</div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<div id="resultHero" class="result-hero hero-g1">
+  <div class="hero-circle hero-circle-1"></div>
+  <div class="hero-circle hero-circle-2"></div>
+  <span class="result-mascot" id="resultMascot">🎉</span>
+  <div class="result-title" id="resultTitle">よくできました！</div>
+  <div class="result-subtitle" id="resultSubtitle"></div>
+</div>
+
+<div class="result-page">
+  <div class="stars-card">
+    <div class="stars-row" id="starsRow"></div>
+    <div class="score-display" id="scoreDisplay">0 / 0</div>
+    <div class="score-label">もんだいの せいかい</div>
+    <div class="result-message" id="resultMessage"></div>
+  </div>
+
+  <div class="action-btns" id="actionBtns"></div>
+</div>
+
+<script src="../assets/js/storage.js"></script>
+<script>
+const params  = new URLSearchParams(location.search);
+const grade   = params.get('grade') || '1';
+const qid     = params.get('qid');
+const score   = parseInt(params.get('score')) || 0;
+const total   = parseInt(params.get('total')) || 1;
+const stars   = parseInt(params.get('stars')) || 1;
+const pct     = Math.round((score / total) * 100);
+
+const HERO_CLASSES = ['','hero-g1','hero-g2','hero-g3','hero-g4','hero-g5','hero-g6'];
+const MASCOTS      = ['','🐣','🐰','🦊','🦁','🦅','🦄'];
+const COLORS       = ['','#FF6B6B','#FF9F43','#26de81','#45aaf2','#a29bfe','#fd79a8'];
+const color = COLORS[+grade] || '#FF6B6B';
+
+const MESSAGES = {
+  3: ['🌟 かんぺき！ すごすぎる！', '🏆 まんてん！ さんすう マスター！', '🎊 ぜんぶ せいかい！ さいこう！'],
+  2: ['👏 よくできました！ もうすこし！', '⭐ なかなか やるね！', '😊 いい かんじ！ もう いちど やってみよう！'],
+  1: ['💪 まだまだ これから！ がんばろう！', '📖 レッスンを もういちど よんでみよう！', '🌱 れんしゅうすれば かならず できる！']
+};
+
+function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+// Hero
+document.getElementById('resultHero').className = `result-hero ${HERO_CLASSES[+grade] || 'hero-g1'}`;
+
+if (stars === 3) {
+  document.getElementById('resultMascot').textContent = '🏆';
+  document.getElementById('resultTitle').textContent = 'かんぺき！';
+  document.getElementById('resultSubtitle').textContent = 'ぜんぶ せいかい！ すごい！！';
+} else if (stars === 2) {
+  document.getElementById('resultMascot').textContent = MASCOTS[+grade];
+  document.getElementById('resultTitle').textContent = 'よくできました！';
+  document.getElementById('resultSubtitle').textContent = `${score} もん せいかい！ あと もうすこし！`;
+} else {
+  document.getElementById('resultMascot').textContent = '💪';
+  document.getElementById('resultTitle').textContent = 'がんばったね！';
+  document.getElementById('resultSubtitle').textContent = 'もういちど ちょうせん してみよう！';
+}
+
+// Stars
+const starsRow = document.getElementById('starsRow');
+for (let i = 1; i <= 3; i++) {
+  const s = document.createElement('span');
+  s.className = 'star-big' + (i <= stars ? '' : ' empty');
+  s.textContent = '⭐';
+  starsRow.appendChild(s);
+}
+
+document.getElementById('scoreDisplay').textContent = `${score} / ${total}`;
+document.getElementById('resultMessage').textContent = rand(MESSAGES[stars] || MESSAGES[1]);
+
+// Action buttons
+document.getElementById('actionBtns').innerHTML = `
+  <a class="btn-primary" href="../grade/grade${grade}.html" style="background:linear-gradient(135deg,${color},${color}bb)">
+    📚 もっと べんきょうする
+  </a>
+  <div class="btn-row">
+    <a class="btn-secondary" href="../quiz/quiz.html?grade=${grade}&qid=${qid}">🔄 もういちど</a>
+    <a class="btn-secondary" href="../index.html">🏠 トップへ</a>
+  </div>
+`;
+
+// Confetti for perfect score
+if (stars === 3) {
+  const confetti = ['🌟','⭐','✨','🎉','🎊','🏆','💫','🎈'];
+  const wrap = document.getElementById('confettiWrap');
+  for (let i = 0; i < 30; i++) {
+    const el = document.createElement('span');
+    el.className = 'confetti-piece';
+    el.textContent = confetti[Math.floor(Math.random() * confetti.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.animationDuration = (2 + Math.random() * 3) + 's';
+    el.style.animationDelay = (Math.random() * 2) + 's';
+    wrap.appendChild(el);
+  }
+}
+</script>
+</body>
+</html>

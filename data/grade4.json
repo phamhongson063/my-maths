@@ -1,0 +1,50 @@
+{
+  "grade": 4,
+  "gradeTitle": "4ねんせい",
+  "heroTitle": "大きな かず の せかい",
+  "mascot": "🦁",
+  "heroClass": "hero-g4",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "大きな数",
+      "icon": "🔢",
+      "lessons": [
+        {"id": "4-1-1", "title": "億・兆の位", "type": "lesson", "duration": 12},
+        {"id": "4-1-2", "title": "大きな数のかけ・わり算", "type": "lesson", "duration": 15},
+        {"id": "4-1-q", "title": "大きな数のテスト", "type": "quiz", "duration": 8}
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "角度と図形",
+      "icon": "📐",
+      "lessons": [
+        {"id": "4-2-1", "title": "角のはかりかた", "type": "lesson", "duration": 12},
+        {"id": "4-2-2", "title": "三角形の角", "type": "lesson", "duration": 12},
+        {"id": "4-2-3", "title": "平行四辺形・ひし形", "type": "lesson", "duration": 12},
+        {"id": "4-2-q", "title": "図形のテスト", "type": "quiz", "duration": 8}
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "面積",
+      "icon": "⬜",
+      "lessons": [
+        {"id": "4-3-1", "title": "正方形・長方形の面積", "type": "lesson", "duration": 12},
+        {"id": "4-3-2", "title": "複合図形の面積", "type": "lesson", "duration": 15},
+        {"id": "4-3-q", "title": "面積のテスト", "type": "quiz", "duration": 8}
+      ]
+    },
+    {
+      "id": "c4",
+      "title": "小数と折れ線グラフ",
+      "icon": "📈",
+      "lessons": [
+        {"id": "4-4-1", "title": "小数のかけ・わり算", "type": "lesson", "duration": 15},
+        {"id": "4-4-2", "title": "折れ線グラフのよみかた", "type": "lesson", "duration": 12},
+        {"id": "4-4-q", "title": "小数とグラフのテスト", "type": "quiz", "duration": 8}
+      ]
+    }
+  ]
+}

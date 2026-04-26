@@ -1,0 +1,51 @@
+{
+  "grade": 6,
+  "gradeTitle": "6ねんせい",
+  "heroTitle": "さいこう の さんすう！",
+  "mascot": "🦄",
+  "heroClass": "hero-g6",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "分数のかけ算・わり算",
+      "icon": "🔸",
+      "lessons": [
+        {"id": "6-1-1", "title": "分数×分数", "type": "lesson", "duration": 15},
+        {"id": "6-1-2", "title": "分数÷分数", "type": "lesson", "duration": 15},
+        {"id": "6-1-q", "title": "分数のテスト", "type": "quiz", "duration": 8}
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "比と対称",
+      "icon": "⚖️",
+      "lessons": [
+        {"id": "6-2-1", "title": "比のあらわしかた", "type": "lesson", "duration": 12},
+        {"id": "6-2-2", "title": "線対称・点対称", "type": "lesson", "duration": 15},
+        {"id": "6-2-3", "title": "拡大図・縮小図", "type": "lesson", "duration": 15},
+        {"id": "6-2-q", "title": "比と対称のテスト", "type": "quiz", "duration": 8}
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "円の面積と体積",
+      "icon": "⭕",
+      "lessons": [
+        {"id": "6-3-1", "title": "円周率と円の面積", "type": "lesson", "duration": 15},
+        {"id": "6-3-2", "title": "角柱・円柱の体積", "type": "lesson", "duration": 15},
+        {"id": "6-3-q", "title": "面積・体積のテスト", "type": "quiz", "duration": 8}
+      ]
+    },
+    {
+      "id": "c4",
+      "title": "文字と式・資料",
+      "icon": "📊",
+      "lessons": [
+        {"id": "6-4-1", "title": "文字をつかった式", "type": "lesson", "duration": 12},
+        {"id": "6-4-2", "title": "資料の調べかた", "type": "lesson", "duration": 12},
+        {"id": "6-4-3", "title": "比例と反比例", "type": "lesson", "duration": 15},
+        {"id": "6-4-q", "title": "まとめのテスト", "type": "quiz", "duration": 10}
+      ]
+    }
+  ]
+}

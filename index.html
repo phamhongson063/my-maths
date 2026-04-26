@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>さんすうの森 🌟</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Animated background -->
+<div class="bg-wrapper">
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+  <div class="math-symbols" id="mathSymbols"></div>
+</div>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="site-logo">
+    <span class="logo-icon">⭐</span>
+    <span class="logo-text">さんすうの森</span>
+    <span class="logo-icon">⭐</span>
+  </div>
+  <h1 class="site-title">算数を楽しく学ぼう！</h1>
+  <p class="site-subtitle">🎯 えらんで・まなんで・マスターしよう！</p>
+  <div class="progress-badge">
+    <span class="stars">⭐⭐⭐</span>
+    <span id="totalProgress">ぜんたい の しんちょく：0%</span>
+  </div>
+</header>
+
+<!-- Main -->
+<main class="main-content">
+  <p class="section-label">📚 がくねん を えらぼう</p>
+
+  <div class="grade-grid">
+
+    <!-- Grade 1 -->
+    <a href="grade/grade1.html" class="grade-card grade-1">
+      <div class="card-banner">
+        <div class="banner-circle banner-circle-1"></div>
+        <div class="banner-circle banner-circle-2"></div>
+        <span class="card-mascot">🐣</span>
+        <div class="card-grade-num">1</div>
+        <div class="card-grade-label">ねんせい</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">はじめての さんすう</div>
+        <div class="topic-chips">
+          <span class="chip">たしざん</span>
+          <span class="chip">ひきざん</span>
+          <span class="chip">かたち</span>
+          <span class="chip">かず</span>
+        </div>
+        <div class="card-stars" data-grade="1">
+          <span class="star">⭐</span><span class="star">⭐</span>
+          <span class="star empty">⭐</span><span class="star empty">⭐</span><span class="star empty">⭐</span>
+        </div>
+        <div class="card-progress">
+          <div class="progress-label"><span>しんちょく</span><span class="prog-pct" data-grade="1">0%</span></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" data-grade="1" style="width:0%"></div></div>
+        </div>
+        <span class="card-btn">はじめる →</span>
+      </div>
+    </a>
+
+    <!-- Grade 2 -->
+    <a href="grade/grade2.html" class="grade-card grade-2">
+      <div class="card-banner">
+        <div class="banner-circle banner-circle-1"></div>
+        <div class="banner-circle banner-circle-2"></div>
+        <span class="card-mascot">🐰</span>
+        <div class="card-grade-num">2</div>
+        <div class="card-grade-label">ねんせい</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">かけ算 マスター</div>
+        <div class="topic-chips">
+          <span class="chip">かけざん</span>
+          <span class="chip">大きなかず</span>
+          <span class="chip">図形</span>
+          <span class="chip">時計</span>
+        </div>
+        <div class="card-stars" data-grade="2">
+          <span class="star">⭐</span>
+          <span class="star empty">⭐</span><span class="star empty">⭐</span>
+          <span class="star empty">⭐</span><span class="star empty">⭐</span>
+        </div>
+        <div class="card-progress">
+          <div class="progress-label"><span>しんちょく</span><span class="prog-pct" data-grade="2">0%</span></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" data-grade="2" style="width:0%"></div></div>
+        </div>
+        <span class="card-btn">はじめる →</span>
+      </div>
+    </a>
+
+    <!-- Grade 3 -->
+    <a href="grade/grade3.html" class="grade-card grade-3">
+      <div class="card-banner">
+        <div class="banner-circle banner-circle-1"></div>
+        <div class="banner-circle banner-circle-2"></div>
+        <span class="card-mascot">🦊</span>
+        <div class="card-grade-num">3</div>
+        <div class="card-grade-label">ねんせい</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">わり算 チャレンジ</div>
+        <div class="topic-chips">
+          <span class="chip">わりざん</span>
+          <span class="chip">小数</span>
+          <span class="chip">分数</span>
+          <span class="chip">重さ</span>
+        </div>
+        <div class="card-stars" data-grade="3">
+          <span class="star empty">⭐</span><span class="star empty">⭐</span>
+          <span class="star empty">⭐</span><span class="star empty">⭐</span><span class="star empty">⭐</span>
+        </div>
+        <div class="card-progress">
+          <div class="progress-label"><span>しんちょく</span><span class="prog-pct" data-grade="3">0%</span></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" data-grade="3" style="width:0%"></div></div>
+        </div>
+        <span class="card-btn">はじめる →</span>
+      </div>
+    </a>
+
+    <!-- Grade 4 -->
+    <a href="grade/grade4.html" class="grade-card grade-4">
+      <div class="card-banner">
+        <div class="banner-circle banner-circle-1"></div>
+        <div class="banner-circle banner-circle-2"></div>
+        <span class="card-mascot">🦁</span>
+        <div class="card-grade-num">4</div>
+        <div class="card-grade-label">ねんせい</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">大きな かず の せかい</div>
+        <div class="topic-chips">
+          <span class="chip">大きな数</span>
+          <span class="chip">面積</span>
+          <span class="chip">角度</span>
+          <span class="chip">グラフ</span>
+        </div>
+        <div class="card-stars" data-grade="4">
+          <span class="star empty">⭐</span><span class="star empty">⭐</span>
+          <span class="star empty">⭐</span><span class="star empty">⭐</span><span class="star empty">⭐</span>
+        </div>
+        <div class="card-progress">
+          <div class="progress-label"><span>しんちょく</span><span class="prog-pct" data-grade="4">0%</span></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" data-grade="4" style="width:0%"></div></div>
+        </div>
+        <span class="card-btn">はじめる →</span>
+      </div>
+    </a>
+
+    <!-- Grade 5 -->
+    <a href="grade/grade5.html" class="grade-card grade-5">
+      <div class="card-banner">
+        <div class="banner-circle banner-circle-1"></div>
+        <div class="banner-circle banner-circle-2"></div>
+        <span class="card-mascot">🦅</span>
+        <div class="card-grade-num">5</div>
+        <div class="card-grade-label">ねんせい</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">ぶんすう の せかい</div>
+        <div class="topic-chips">
+          <span class="chip">分数</span>
+          <span class="chip">体積</span>
+          <span class="chip">割合</span>
+          <span class="chip">速さ</span>
+        </div>
+        <div class="card-stars" data-grade="5">
+          <span class="star empty">⭐</span><span class="star empty">⭐</span>
+          <span class="star empty">⭐</span><span class="star empty">⭐</span><span class="star empty">⭐</span>
+        </div>
+        <div class="card-progress">
+          <div class="progress-label"><span>しんちょく</span><span class="prog-pct" data-grade="5">0%</span></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" data-grade="5" style="width:0%"></div></div>
+        </div>
+        <span class="card-btn">はじめる →</span>
+      </div>
+    </a>
+
+    <!-- Grade 6 -->
+    <a href="grade/grade6.html" class="grade-card grade-6">
+      <div class="card-banner">
+        <div class="banner-circle banner-circle-1"></div>
+        <div class="banner-circle banner-circle-2"></div>
+        <span class="card-mascot">🦄</span>
+        <div class="card-grade-num">6</div>
+        <div class="card-grade-label">ねんせい</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">さいこう の さんすう！</div>
+        <div class="topic-chips">
+          <span class="chip">比</span>
+          <span class="chip">対称</span>
+          <span class="chip">資料</span>
+          <span class="chip">円の面積</span>
+        </div>
+        <div class="card-stars" data-grade="6">
+          <span class="star empty">⭐</span><span class="star empty">⭐</span>
+          <span class="star empty">⭐</span><span class="star empty">⭐</span><span class="star empty">⭐</span>
+        </div>
+        <div class="card-progress">
+          <div class="progress-label"><span>しんちょく</span><span class="prog-pct" data-grade="6">0%</span></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" data-grade="6" style="width:0%"></div></div>
+        </div>
+        <span class="card-btn">はじめる →</span>
+      </div>
+    </a>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  🌟 まいにち すこしずつ、かしこく なろう！ 🌟
+</footer>
+
+<script src="assets/js/storage.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+  // Floating math symbols
+  const symbols = ['+', '−', '×', '÷', '=', '1', '2', '3', '5', '8', '∞', '%'];
+  const container = document.getElementById('mathSymbols');
+  for (let i = 0; i < 20; i++) {
+    const el = document.createElement('span');
+    el.className = 'math-sym';
+    el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    const left = Math.random() * 100;
+    const dur = 12 + Math.random() * 16;
+    const delay = -Math.random() * 20;
+    el.style.cssText = `left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s`;
+    container.appendChild(el);
+  }
+
+  // Load progress from storage
+  document.querySelectorAll('.progress-bar-fill[data-grade]').forEach(bar => {
+    const grade = bar.dataset.grade;
+    const pct = AppStorage.getGradeProgress(grade);
+    bar.style.width = pct + '%';
+    document.querySelector(`.prog-pct[data-grade="${grade}"]`).textContent = pct + '%';
+  });
+</script>
+</body>
+</html>

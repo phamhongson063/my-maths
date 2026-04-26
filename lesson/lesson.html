@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>レッスン | さんすうの森</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .lesson-page { max-width: 760px; margin: 0 auto; padding: 0 20px 80px; font-size: 1.05rem; }
+    .lesson-hero {
+      border-radius: 0 0 40px 40px;
+      padding: 100px 24px 40px;
+      text-align: center;
+      position: relative;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+    .lesson-hero .back-btn { top: 16px; left: 16px; }
+    .lesson-hero-icon { font-size: 4rem; display: block; margin-bottom: 12px; animation: mascotFloat 3s ease-in-out infinite; }
+    .lesson-hero-tag { font-size: 0.8rem; font-weight: 800; color: rgba(255,255,255,0.8); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+    .lesson-hero-title { font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 900; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .lesson-nav-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.8rem; font-weight: 700; color: #b2bec3; }
+    .content-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.10); padding: 28px 24px; margin-bottom: 20px; animation: cardIn 0.4s ease both; }
+    .content-intro { font-size: 1.5rem; font-weight: 800; color: #2d3436; text-align: center; margin-bottom: 24px; padding: 18px; border-radius: 16px; background: #f8f9fa; line-height: 1.5; }
+    .content-section-heading { font-size: 1rem; font-weight: 800; color: #b2bec3; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+    .count-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; margin-bottom: 8px; }
+    .count-item {
+      border-radius: 20px; padding: 20px 12px 16px; text-align: center;
+      transition: transform 0.25s, box-shadow 0.25s;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+      border: 2px solid rgba(0,0,0,0.05);
+    }
+    .count-item:hover { transform: translateY(-6px) scale(1.04); box-shadow: 0 12px 28px rgba(0,0,0,0.14); }
+    .count-visual {
+      font-size: 2.6rem; line-height: 1.4; word-break: break-all; margin-bottom: 10px;
+      display: block; min-height: 60px;
+      background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+      border-radius: 14px; padding: 10px 6px;
+    }
+    .count-number { font-size: 2.6rem; font-weight: 900; color: #2d3436; line-height: 1; }
+    .count-reading { font-size: 1rem; font-weight: 700; color: #636e72; margin-top: 8px; background:#f1f2f6; border-radius:8px; padding:4px 10px; display:inline-block; }
+    .keypoints { margin-top: 24px; }
+    .keypoints-heading { font-size: 1.2rem; font-weight: 800; color: #2d3436; margin-bottom: 14px; }
+    .keypoint { display: flex; align-items: flex-start; gap: 12px; padding: 16px 20px; background: #f8f9fa; border-radius: 14px; margin-bottom: 10px; font-size: 1.15rem; font-weight: 700; color: #2d3436; line-height: 1.5; }
+    .keypoint-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+    .lesson-cta { display: flex; gap: 12px; }
+    .btn-quiz { flex: 1; display: block; text-align: center; padding: 22px; border-radius: 20px; font-size: 1.3rem; font-weight: 900; color: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.15); transition: transform 0.2s; text-decoration: none; }
+    .btn-quiz:hover { transform: translateY(-3px); }
+    .btn-secondary { flex: 0 0 auto; display: block; padding: 22px 24px; border-radius: 20px; font-size: 1.15rem; font-weight: 800; color: #636e72; background: #f1f2f6; text-decoration: none; text-align: center; transition: background 0.2s; }
+    .btn-secondary:hover { background: #dfe6e9; }
+  </style>
+</head>
+<body>
+<div class="bg-wrapper">
+  <div class="bg-blob"></div><div class="bg-blob"></div><div class="bg-blob"></div>
+</div>
+
+<div id="lessonHero" class="lesson-hero hero-g1">
+  <div class="hero-circle hero-circle-1"></div>
+  <div class="hero-circle hero-circle-2"></div>
+  <a id="backBtn" href="../grade/grade1.html" class="back-btn">← もどる</a>
+  <span class="lesson-hero-icon" id="heroIcon">📖</span>
+  <div class="lesson-hero-tag" id="heroTag">レッスン</div>
+  <div class="lesson-hero-title" id="heroTitle">よみこみちゅう…</div>
+</div>
+
+<div class="lesson-page">
+  <div class="lesson-nav-top">
+    <span id="lessonNum"></span>
+    <span id="lessonDuration"></span>
+  </div>
+  <div id="lessonContent">
+    <div class="content-card" style="text-align:center;color:#b2bec3;font-weight:700;padding:40px">📚 よみこみちゅう…</div>
+  </div>
+</div>
+
+<script src="../assets/js/storage.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const grade  = params.get('grade') || '1';
+const lid    = params.get('lid');
+
+const HERO_CLASSES = ['','hero-g1','hero-g2','hero-g3','hero-g4','hero-g5','hero-g6'];
+const MASCOTS      = ['','🐣','🐰','🦊','🦁','🦅','🦄'];
+const COLORS       = ['','#FF6B6B','#FF9F43','#26de81','#45aaf2','#a29bfe','#fd79a8'];
+
+async function loadLesson() {
+  let data;
+  try {
+    const res = await fetch(`../data/grade${grade}.json`);
+    data = await res.json();
+  } catch {
+    document.getElementById('heroTitle').textContent = 'データが みつかりません';
+    return;
+  }
+
+  let lesson = null, chapterIdx = 0, lessonIdx = 0;
+  data.chapters.forEach((ch, ci) => {
+    ch.lessons.forEach((l, li) => {
+      if (l.id === lid) { lesson = l; chapterIdx = ci; lessonIdx = li; }
+    });
+  });
+
+  if (!lesson || lesson.type === 'quiz') {
+    location.href = `../grade/grade${grade}.html`;
+    return;
+  }
+
+  const heroClass = HERO_CLASSES[+grade] || 'hero-g1';
+  document.getElementById('lessonHero').className = `lesson-hero ${heroClass}`;
+  document.getElementById('heroIcon').textContent = data.chapters[chapterIdx].icon;
+  document.getElementById('heroTag').textContent = `だい ${chapterIdx + 1} しょう · レッスン ${lessonIdx + 1}`;
+  document.getElementById('heroTitle').textContent = lesson.title;
+  document.getElementById('backBtn').href = `../grade/grade${grade}.html`;
+  document.getElementById('lessonNum').textContent = `📖 レッスン ${lessonIdx + 1}`;
+  document.getElementById('lessonDuration').textContent = `⏱ やく ${lesson.duration}ふん`;
+  document.title = `${lesson.title} | さんすうの森`;
+
+  const color = COLORS[+grade] || '#FF6B6B';
+  const allLessons = data.chapters.flatMap(ch => ch.lessons);
+  const curIdx = allLessons.findIndex(l => l.id === lid);
+  const nextLesson = allLessons.slice(curIdx + 1).find(l => l.type === 'lesson');
+  const chapterQuiz = data.chapters[chapterIdx].lessons.find(l => l.type === 'quiz');
+
+  const c = lesson.content || {};
+  let sectionsHtml = '';
+  (c.sections || []).forEach(sec => {
+    sectionsHtml += `<div class="content-section-heading">${sec.heading}</div>
+    <div class="count-grid">
+      ${(sec.items || []).map(item => `
+        <div class="count-item">
+          <div class="count-visual">${item.visual}</div>
+          <div class="count-number">${item.number}</div>
+          <div class="count-reading">${item.reading}</div>
+        </div>`).join('')}
+    </div>`;
+  });
+
+  const keypointsHtml = (c.keypoints || []).map((kp, i) => `
+    <div class="keypoint">
+      <div class="keypoint-dot" style="background:${color}"></div>
+      <span>${kp}</span>
+    </div>`).join('');
+
+  let ctaHtml = '';
+  if (chapterQuiz) {
+    ctaHtml += `<a class="btn-quiz" href="../quiz/quiz.html?grade=${grade}&qid=${chapterQuiz.id}" style="background:linear-gradient(135deg,${color},${color}bb)">📝 テストに ちょうせん！</a>`;
+  }
+  if (nextLesson) {
+    ctaHtml += `<a class="btn-secondary" href="lesson.html?grade=${grade}&lid=${nextLesson.id}">つぎへ →</a>`;
+  } else {
+    ctaHtml += `<a class="btn-secondary" href="../grade/grade${grade}.html">もどる</a>`;
+  }
+
+  document.getElementById('lessonContent').innerHTML = `
+    <div class="content-card">
+      <div class="content-intro">${c.intro || lesson.title}</div>
+      ${sectionsHtml}
+      <div class="keypoints">
+        <div class="keypoints-heading">⭐ ポイント</div>
+        ${keypointsHtml}
+      </div>
+    </div>
+    <div class="content-card lesson-cta">${ctaHtml}</div>
+  `;
+}
+
+loadLesson();
+</script>
+</body>
+</html>

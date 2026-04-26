@@ -1,0 +1,52 @@
+{
+  "grade": 5,
+  "gradeTitle": "5ねんせい",
+  "heroTitle": "ぶんすう の せかい",
+  "mascot": "🦅",
+  "heroClass": "hero-g5",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "整数と小数",
+      "icon": "🔢",
+      "lessons": [
+        {"id": "5-1-1", "title": "整数・小数のしくみ", "type": "lesson", "duration": 12},
+        {"id": "5-1-2", "title": "小数のかけ算", "type": "lesson", "duration": 15},
+        {"id": "5-1-3", "title": "小数のわり算", "type": "lesson", "duration": 15},
+        {"id": "5-1-q", "title": "整数・小数のテスト", "type": "quiz", "duration": 8}
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "分数",
+      "icon": "🔸",
+      "lessons": [
+        {"id": "5-2-1", "title": "約分・通分", "type": "lesson", "duration": 15},
+        {"id": "5-2-2", "title": "分数のたし・ひき算", "type": "lesson", "duration": 15},
+        {"id": "5-2-q", "title": "分数のテスト", "type": "quiz", "duration": 8}
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "体積と図形の面積",
+      "icon": "📦",
+      "lessons": [
+        {"id": "5-3-1", "title": "直方体・立方体の体積", "type": "lesson", "duration": 15},
+        {"id": "5-3-2", "title": "三角形・平行四辺形の面積", "type": "lesson", "duration": 15},
+        {"id": "5-3-3", "title": "台形・ひし形の面積", "type": "lesson", "duration": 12},
+        {"id": "5-3-q", "title": "体積と面積のテスト", "type": "quiz", "duration": 8}
+      ]
+    },
+    {
+      "id": "c4",
+      "title": "割合と速さ",
+      "icon": "💹",
+      "lessons": [
+        {"id": "5-4-1", "title": "割合のもとめかた", "type": "lesson", "duration": 15},
+        {"id": "5-4-2", "title": "百分率・歩合", "type": "lesson", "duration": 12},
+        {"id": "5-4-3", "title": "速さの計算", "type": "lesson", "duration": 15},
+        {"id": "5-4-q", "title": "割合と速さのテスト", "type": "quiz", "duration": 8}
+      ]
+    }
+  ]
+}

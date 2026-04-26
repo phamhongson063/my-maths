@@ -1,0 +1,52 @@
+{
+  "grade": 2,
+  "gradeTitle": "2ねんせい",
+  "heroTitle": "かけ算 マスター！",
+  "mascot": "🐰",
+  "heroClass": "hero-g2",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "大きなかず",
+      "icon": "🔢",
+      "lessons": [
+        {"id": "2-1-1", "title": "100までのかず", "type": "lesson", "duration": 10},
+        {"id": "2-1-2", "title": "1000までのかず", "type": "lesson", "duration": 12},
+        {"id": "2-1-q", "title": "大きなかずのテスト", "type": "quiz", "duration": 5}
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "かけざん（九九）",
+      "icon": "✖️",
+      "lessons": [
+        {"id": "2-2-1", "title": "2・3・4のだん", "type": "lesson", "duration": 15},
+        {"id": "2-2-2", "title": "5・6・7のだん", "type": "lesson", "duration": 15},
+        {"id": "2-2-3", "title": "8・9・1のだん", "type": "lesson", "duration": 15},
+        {"id": "2-2-q", "title": "九九マスターテスト", "type": "quiz", "duration": 10}
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "長さとかさ",
+      "icon": "📏",
+      "lessons": [
+        {"id": "2-3-1", "title": "センチメートル・ミリメートル", "type": "lesson", "duration": 12},
+        {"id": "2-3-2", "title": "メートル", "type": "lesson", "duration": 10},
+        {"id": "2-3-3", "title": "デシリットル・リットル", "type": "lesson", "duration": 10},
+        {"id": "2-3-q", "title": "長さとかさのテスト", "type": "quiz", "duration": 5}
+      ]
+    },
+    {
+      "id": "c4",
+      "title": "図形と時計",
+      "icon": "🕐",
+      "lessons": [
+        {"id": "2-4-1", "title": "三角形と四角形", "type": "lesson", "duration": 12},
+        {"id": "2-4-2", "title": "時計のよみかた", "type": "lesson", "duration": 10},
+        {"id": "2-4-3", "title": "時間と時こく", "type": "lesson", "duration": 12},
+        {"id": "2-4-q", "title": "図形と時計のテスト", "type": "quiz", "duration": 5}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4ねんせい | さんすうの森</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="bg-wrapper">
+  <div class="bg-blob"></div><div class="bg-blob"></div><div class="bg-blob"></div>
+</div>
+<div class="grade-hero hero-g4">
+  <div class="hero-circle hero-circle-1"></div>
+  <div class="hero-circle hero-circle-2"></div>
+  <div class="hero-circle hero-circle-3"></div>
+  <a href="../index.html" class="back-btn">← もどる</a>
+  <span class="hero-mascot">🦁</span>
+  <div class="hero-grade">4 ねんせい</div>
+  <h1 class="hero-title">大きな かず の せかい</h1>
+  <div class="hero-progress">
+    <span class="prog-text" id="heroProgressText">よみこみちゅう…</span>
+    <div class="hero-progress-bar">
+      <div class="hero-progress-fill" id="heroProgressFill" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+<div class="chapters-container" id="chaptersContainer">
+  <div style="text-align:center;padding:40px;color:#b2bec3;font-weight:700;">📚 よみこみちゅう…</div>
+</div>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+  const GRADE_DATA = {"grade":4,"gradeTitle":"4ねんせい","heroTitle":"大きな かず の せかい","mascot":"🦁","heroClass":"hero-g4","chapters":[{"id":"c1","title":"大きな数","icon":"🔢","lessons":[{"id":"4-1-1","title":"億・兆の位","type":"lesson","duration":12},{"id":"4-1-2","title":"大きな数のかけ・わり算","type":"lesson","duration":15},{"id":"4-1-q","title":"大きな数のテスト","type":"quiz","duration":8}]},{"id":"c2","title":"角度と図形","icon":"📐","lessons":[{"id":"4-2-1","title":"角のはかりかた","type":"lesson","duration":12},{"id":"4-2-2","title":"三角形の角","type":"lesson","duration":12},{"id":"4-2-3","title":"平行四辺形・ひし形","type":"lesson","duration":12},{"id":"4-2-q","title":"図形のテスト","type":"quiz","duration":8}]},{"id":"c3","title":"面積","icon":"⬜","lessons":[{"id":"4-3-1","title":"正方形・長方形の面積","type":"lesson","duration":12},{"id":"4-3-2","title":"複合図形の面積","type":"lesson","duration":15},{"id":"4-3-q","title":"面積のテスト","type":"quiz","duration":8}]},{"id":"c4","title":"小数と折れ線グラフ","icon":"📈","lessons":[{"id":"4-4-1","title":"小数のかけ・わり算","type":"lesson","duration":15},{"id":"4-4-2","title":"折れ線グラフのよみかた","type":"lesson","duration":12},{"id":"4-4-q","title":"小数とグラフのテスト","type":"quiz","duration":8}]}]};
+  document.addEventListener('DOMContentLoaded', () => renderGradePage(GRADE_DATA));
+</script>
+</body>
+</html>
