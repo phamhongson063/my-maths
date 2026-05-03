@@ -9,7 +9,6 @@
 
     body {
       height: 100vh;
-      height: 100dvh;
       display: flex;
       background: #e8f4f8;
       font-family: 'Segoe UI', sans-serif;
@@ -405,6 +404,14 @@
   </div>
 
 <script>
+  // Fix height on mobile browsers (accounts for address bar + nav bar)
+  function fixHeight() {
+    document.body.style.height = window.innerHeight + 'px';
+  }
+  fixHeight();
+  window.addEventListener('resize', fixHeight);
+  window.addEventListener('orientationchange', () => setTimeout(fixHeight, 300));
+
   const CX = 150, CY = 150;
   const MINUTE_R = 122;
   const HOUR_R   = 83;
