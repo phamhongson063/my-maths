@@ -537,6 +537,7 @@
       </div>
       <button class="btn-speak" id="btnSpeak">🔊 Speak</button>
       <div id="voiceLabel" class="voice-label" style="display: none"></div>
+      <div id="debugLog" style="font-size:0.7rem;color:#888;text-align:center;word-break:break-all;min-height:1em;"></div>
     </div>
 
     <button class="btn-gear" id="btnGear" title="Cài đặt nhãn">⚙️</button>
@@ -891,6 +892,9 @@
       let jaVoices = [];
       let lastGender = "male";
 
+      const dbgEl = document.getElementById("debugLog");
+      function dbg(msg) { console.log(msg); if (dbgEl) dbgEl.textContent = msg; }
+
       function loadJaVoices() {
         const all = window.speechSynthesis.getVoices();
         jaVoices = all.filter((v) => v.lang.startsWith("ja"));
@@ -908,76 +912,60 @@
         } else {
           voiceLabel.textContent = "ja-JP default  (pitch ♀/♂)";
         }
+        dbg(`Japanese voices: ${jaVoices.length} — ${jaVoices.map(v=>v.name).join(', ') || 'none'}`);
       }
 
       loadJaVoices();
       window.speechSynthesis.onvoiceschanged = loadJaVoices;
 
-      let ttsAudioCtx = null;
-      let ttsSource   = null;
-
-      function getTTSUrl(text) {
-        return `https://translate.googleapis.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(text)}`;
-      }
-
-      function stopCurrent() {
-        try { if (ttsSource) { ttsSource.stop(); ttsSource = null; } } catch(_) {}
+      function fallbackSpeech(text, isMale) {
         window.speechSynthesis.cancel();
-        btnSpeak.classList.remove("speaking");
-      }
-
-      async function speakViaWebAudio(text) {
-        // Fetch audio → decode → play via AudioContext (bypasses Samsung audio layer)
-        if (!ttsAudioCtx) {
-          ttsAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        await ttsAudioCtx.resume();
-
-        const resp = await fetch(getTTSUrl(text));
-        const buf  = await resp.arrayBuffer();
-        const decoded = await ttsAudioCtx.decodeAudioData(buf);
-
-        const src = ttsAudioCtx.createBufferSource();
-        src.buffer = decoded;
-        src.connect(ttsAudioCtx.destination);
-        ttsSource = src;
-
-        src.onended = () => { btnSpeak.classList.remove("speaking"); ttsSource = null; };
-        src.start(0);
-      }
-
-      function speakViaElement(text, onFail) {
-        const audio = new Audio(getTTSUrl(text));
-        audio.onended = () => btnSpeak.classList.remove("speaking");
-        audio.onerror = onFail;
-        audio.play().catch(onFail);
-      }
-
-      function speakViaSpeechAPI(text, isMale) {
+        window.speechSynthesis.resume();
+        const voice = jaVoices.length >= 2 ? (isMale ? jaVoices[1] : jaVoices[0])
+                    : jaVoices[0] || null;
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang   = "ja-JP";
         utterance.rate   = 0.75;
         utterance.volume = 1;
         utterance.pitch  = isMale ? 0.6 : 1.0;
-        const voice = jaVoices.length >= 2 ? (isMale ? jaVoices[1] : jaVoices[0]) : jaVoices[0] || null;
         if (voice) utterance.voice = voice;
-        utterance.onend   = () => btnSpeak.classList.remove("speaking");
-        utterance.onerror = () => btnSpeak.classList.remove("speaking");
-        window.speechSynthesis.resume();
-        setTimeout(() => window.speechSynthesis.speak(utterance), 50);
+        utterance.onstart = () => { btnSpeak.classList.add("speaking"); dbg(`▶ Speech API (${voice ? voice.name : 'default'})`); };
+        utterance.onend   = () => { btnSpeak.classList.remove("speaking"); dbg("✅ done"); };
+        utterance.onerror = (e) => { btnSpeak.classList.remove("speaking"); dbg("❌ Speech API error: " + e.error); };
+        setTimeout(() => window.speechSynthesis.speak(utterance), 100);
       }
 
       function doSpeak(text, isMale) {
-        stopCurrent();
-        btnSpeak.classList.add("speaking");
+        window.speechSynthesis.cancel();
+        btnSpeak.classList.remove("speaking");
 
-        // Method 1: WebAudio API (most direct, works on Samsung)
-        speakViaWebAudio(text).catch(() => {
-          // Method 2: Audio element
-          speakViaElement(text, () => {
-            // Method 3: Web Speech API
-            speakViaSpeechAPI(text, isMale);
-          });
+        const isLocal = /^(localhost|127\.|192\.|10\.|172\.)/.test(location.hostname);
+        const url = isLocal
+          ? `${location.origin}/tts?q=${encodeURIComponent(text)}&lang=ja`
+          : `https://translate.googleapis.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=ja&client=gtx&ttsspeed=0.8`;
+        dbg(isLocal ? "Google TTS (proxy)..." : "Google TTS (direct)...");
+
+        const audio = new Audio(url);
+        audio.volume = 1;
+
+        audio.addEventListener("playing", () => {
+          btnSpeak.classList.add("speaking");
+          dbg("▶ Google TTS playing");
+        });
+        audio.addEventListener("ended", () => {
+          btnSpeak.classList.remove("speaking");
+          dbg("✅ done");
+        });
+        audio.addEventListener("error", (e) => {
+          const codes = ["ABORTED","NETWORK","DECODE","SRC_NOT_SUPPORTED"];
+          const code = e.target.error ? (codes[e.target.error.code - 1] || e.target.error.code) : "unknown";
+          dbg(`⚠ Google TTS fail (${code}) → Speech API`);
+          fallbackSpeech(text, isMale);
+        });
+
+        audio.play().catch((err) => {
+          dbg(`⚠ Google TTS blocked (${err.name}) → Speech API`);
+          fallbackSpeech(text, isMale);
         });
       }
 

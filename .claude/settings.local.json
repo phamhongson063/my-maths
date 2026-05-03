@@ -3,7 +3,14 @@
     "allow": [
       "Bash(python3 -m http.server 3001)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001/index.html)",
-      "Bash(pkill -f \"python3 -m http.server 3001\")"
+      "Bash(pkill -f \"python3 -m http.server 3001\")",
+      "Bash(ipconfig getifaddr *)",
+      "Bash(python3 -m http.server 3333)",
+      "Bash(xargs kill *)",
+      "Bash(curl -s -o /tmp/test_tts.mp3 -w \"%{http_code} size=%{size_download}\" \"http://localhost:3333/tts?q=3%E6%99%8215%E5%88%86&lang=ja\")",
+      "Bash(curl -s -o /tmp/test_tts.mp3 -w \"%{http_code}\" -A \"Mozilla/5.0\" \"https://translate.googleapis.com/translate_tts?ie=UTF-8&q=3%E6%99%8215%E5%88%86&tl=ja&client=gtx&ttsspeed=0.8\")",
+      "Bash(python3 /Users/son.ph/Documents/Project/my/my-maths/server.py)",
+      "Bash(curl -s -o /tmp/test.mp3 -w \"%{http_code} size=%{size_download}\" \"http://localhost:3333/tts?q=3%E6%99%8215%E5%88%86&lang=ja\")"
     ]
   }
 }
