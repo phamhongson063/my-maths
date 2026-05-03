@@ -1,809 +1,980 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Tập xem giờ đồng hồ</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+    <title>Tập xem giờ đồng hồ</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    body {
-      height: 100vh;
-      display: flex;
-      background: #e8f4f8;
-      font-family: 'Segoe UI', sans-serif;
-      overflow: hidden;
-    }
+      body {
+        height: 100vh;
+        display: flex;
+        background: #e8f4f8;
+        font-family: "Segoe UI", sans-serif;
+        overflow: hidden;
+      }
 
-    /* ── Left: clock area ── */
-    .left {
-      flex: 4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+      /* ── Left: clock area ── */
+      .left {
+        flex: 4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    .clock-wrapper {
-      position: relative;
-      /* size computed in JS to fit the container */
-      width: var(--cw, 520px);
-      height: var(--cw, 520px);
-    }
+      .clock-wrapper {
+        position: relative;
+        /* size computed in JS to fit the container */
+        width: var(--cw, 520px);
+        height: var(--cw, 520px);
+      }
 
-    .minute-label {
-      position: absolute;
-      width: 48px;
-      height: 34px;
-      background: #a8d5c2;
-      border: 2px solid #7abba8;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.05rem;
-      font-weight: bold;
-      color: #1a4a3a;
-      transform: translate(-50%, -50%);
-      box-shadow: 1px 2px 4px rgba(0,0,0,0.2);
-      user-select: none;
-    }
+      .minute-label {
+        position: absolute;
+        width: 48px;
+        height: 34px;
+        background: #a8d5c2;
+        border: 2px solid #7abba8;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+        font-weight: bold;
+        color: #1a4a3a;
+        transform: translate(-50%, -50%);
+        box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.2);
+        user-select: none;
+      }
 
-    .current-minute-label {
-      position: absolute;
-      min-width: 48px;
-      height: 34px;
-      padding: 0 8px;
-      background: #e85d2a;
-      border: 2px solid #c04010;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: white;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 2px 8px rgba(232,93,42,0.5);
-      user-select: none;
-      pointer-events: none;
-      transition: left 0.05s, top 0.05s;
-      z-index: 2;
-    }
+      .current-minute-label {
+        position: absolute;
+        min-width: 48px;
+        height: 34px;
+        padding: 0 8px;
+        background: #e85d2a;
+        border: 2px solid #c04010;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: white;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 2px 8px rgba(232, 93, 42, 0.5);
+        user-select: none;
+        pointer-events: none;
+        transition: left 0.05s, top 0.05s;
+        z-index: 2;
+      }
 
-    svg#clock {
-      width: 100%;
-      height: 100%;
-      cursor: default;
-    }
+      svg#clock {
+        width: 100%;
+        height: 100%;
+        cursor: default;
+      }
 
-    .hand-minute { cursor: grab; }
-    .hand-minute:active { cursor: grabbing; }
+      .hand-minute {
+        cursor: grab;
+      }
+      .hand-minute:active {
+        cursor: grabbing;
+      }
 
-    /* ── Right: input panel ── */
-    .right {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 14px;
-      background: #d0e9f5;
-      border-left: 3px solid #b0d4e8;
-      padding: 20px 12px 16px;
-      overflow: hidden;
-    }
-
-    .right label {
-      font-size: 1.1rem;
-      color: #2c5f8a;
-      font-weight: 700;
-      text-align: center;
-    }
-
-    .time-box {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: white;
-      border: 3px solid #7ab8d8;
-      border-radius: 14px;
-      padding: 12px 16px;
-    }
-
-    .time-box:focus-within {
-      border-color: #2c5f8a;
-      box-shadow: 0 0 0 3px rgba(44,95,138,0.2);
-    }
-
-    .time-box input[type="number"] {
-      font-size: 2.4rem;
-      font-weight: bold;
-      color: #2c5f8a;
-      text-align: center;
-      width: 52px;
-      border: none;
-      outline: none;
-      background: transparent;
-      -moz-appearance: textfield;
-    }
-
-    .time-box input[type="number"]::-webkit-inner-spin-button,
-    .time-box input[type="number"]::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-    }
-
-    .time-sep {
-      font-size: 2.4rem;
-      font-weight: bold;
-      color: #2c5f8a;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-
-    .mode-toggle {
-      display: flex;
-      border: 2px solid #7ab8d8;
-      border-radius: 12px;
-      overflow: hidden;
-      width: 100%;
-    }
-
-    .mode-toggle button {
-      flex: 1;
-      padding: 10px 0;
-      font-size: 0.95rem;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-      background: white;
-      color: #7ab8d8;
-    }
-
-    .mode-toggle button.active {
-      background: #2c5f8a;
-      color: white;
-    }
-
-    .mode-toggle button:first-child {
-      border-right: 1px solid #7ab8d8;
-    }
-
-    .btn-speak {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 24px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: white;
-      background: #2c5f8a;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-      white-space: nowrap;
-    }
-
-    .btn-speak:hover  { background: #1e4a6e; }
-    .btn-speak:active { transform: scale(0.96); }
-
-    .btn-speak.speaking {
-      background: #e05c2a;
-      animation: pulse 0.8s infinite alternate;
-    }
-
-    @keyframes pulse {
-      from { box-shadow: 0 0 0 0 rgba(224,92,42,0.5); }
-      to   { box-shadow: 0 0 0 8px rgba(224,92,42,0); }
-    }
-
-    .voice-label {
-      font-size: 0.72rem;
-      color: #5a7a8a;
-      text-align: center;
-      min-height: 1em;
-      word-break: break-all;
-    }
-
-    /* ── Portrait overlay ── */
-    .portrait-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #2c5f8a;
-      z-index: 999;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      color: white;
-      font-size: 1.2rem;
-      font-weight: 600;
-      text-align: center;
-      padding: 32px;
-    }
-
-    .portrait-overlay .rotate-icon {
-      font-size: 4rem;
-      animation: rotateHint 1.5s ease-in-out infinite;
-    }
-
-    @keyframes rotateHint {
-      0%   { transform: rotate(0deg); }
-      50%  { transform: rotate(90deg); }
-      100% { transform: rotate(90deg); }
-    }
-
-    /* ── Hide slideshow on all mobile ── */
-    @media (max-width: 1280px) and (pointer: coarse) {
-      .deco-frame { display: none; }
-    }
-
-    /* ── Mobile landscape tweaks ── */
-    @media (max-width: 1280px) and (orientation: landscape) and (pointer: coarse) {
-
+      /* ── Right: input panel ── */
       .right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 14px;
+        background: #d0e9f5;
+        border-left: 3px solid #b0d4e8;
+        padding: 20px 12px 16px;
+        overflow: hidden;
+      }
+
+      .right label {
+        font-size: 1.1rem;
+        color: #2c5f8a;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .time-box {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: white;
+        border: 3px solid #7ab8d8;
+        border-radius: 14px;
+        padding: 12px 16px;
+      }
+
+      .time-box:focus-within {
+        border-color: #2c5f8a;
+        box-shadow: 0 0 0 3px rgba(44, 95, 138, 0.2);
+      }
+
+      .time-box input[type="number"] {
+        font-size: 2.4rem;
+        font-weight: bold;
+        color: #2c5f8a;
+        text-align: center;
+        width: 52px;
+        border: none;
+        outline: none;
+        background: transparent;
+        -moz-appearance: textfield;
+      }
+
+      .time-box input[type="number"]::-webkit-inner-spin-button,
+      .time-box input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+      }
+
+      .time-sep {
+        font-size: 2.4rem;
+        font-weight: bold;
+        color: #2c5f8a;
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+
+      .mode-toggle {
+        display: flex;
+        border: 2px solid #7ab8d8;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 100%;
+      }
+
+      .mode-toggle button {
+        flex: 1;
+        padding: 10px 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+        background: white;
+        color: #7ab8d8;
+      }
+
+      .mode-toggle button.active {
+        background: #2c5f8a;
+        color: white;
+      }
+
+      .mode-toggle button:first-child {
+        border-right: 1px solid #7ab8d8;
+      }
+
+      .btn-speak {
+        display: flex;
+        align-items: center;
         gap: 8px;
-        padding: 12px 8px 8px;
+        padding: 14px 24px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: white;
+        background: #2c5f8a;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.1s;
+        white-space: nowrap;
       }
 
-      .right label { font-size: 0.9rem; }
-
-      .time-box input[type="number"] { font-size: 1.8rem; width: 42px; }
-      .time-sep { font-size: 1.8rem; }
-
-      .mode-toggle button { padding: 7px 0; font-size: 0.82rem; }
-      .btn-speak { padding: 10px 16px; font-size: 1rem; }
-    }
-
-    /* ── Show overlay in portrait on mobile ── */
-    @media (max-width: 900px) and (orientation: portrait) {
-      .portrait-overlay { display: flex; }
-    }
-
-    .deco-frame {
-      width: 100%;
-      flex: 1;
-      min-height: 0;
-      padding: 8px;
-      background: white;
-      border-radius: 16px;
-      box-shadow:
-        0 0 0 3px #7ab8d8,
-        0 0 0 6px white,
-        0 0 0 9px #b0d4e8,
-        0 6px 20px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .slide-track {
-      position: relative;
-      flex: 1;
-      min-height: 0;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .slide-track img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 10px;
-      opacity: 0;
-      transition: opacity 0.9s ease-in-out;
-    }
-
-    .slide-track img.active {
-      opacity: 1;
-    }
-
-    .deco-dots {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      padding-top: 8px;
-      flex-shrink: 0;
-    }
-
-    .deco-dots span {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #b0d4e8;
-      transition: background 0.3s, transform 0.3s;
-      cursor: pointer;
-    }
-
-    .deco-dots span.active {
-      background: #2c5f8a;
-      transform: scale(1.3);
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Portrait warning -->
-  <div class="portrait-overlay">
-    <div class="rotate-icon">📱</div>
-    <div>Xoay ngang màn hình để sử dụng</div>
-  </div>
-
-  <!-- Left: clock -->
-  <div class="left">
-    <div class="clock-wrapper" id="clockWrapper">
-      <div class="current-minute-label" id="currentMinLabel">0</div>
-      <svg id="clock" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="metalGrad" cx="40%" cy="35%">
-            <stop offset="0%"   stop-color="#d8d8d8" />
-            <stop offset="60%"  stop-color="#a0a0a0" />
-            <stop offset="100%" stop-color="#787878" />
-          </radialGradient>
-        </defs>
-
-        <!-- Outer metallic ring -->
-        <circle cx="150" cy="150" r="148" fill="url(#metalGrad)" />
-        <!-- Clock face -->
-        <circle cx="150" cy="150" r="130" fill="#f5f0c8" />
-        <!-- Inner ring -->
-        <circle cx="150" cy="150" r="130" fill="none" stroke="#d4c87a" stroke-width="2" />
-
-        <!-- Tick marks -->
-        <g id="ticks"></g>
-        <!-- Hour numbers -->
-        <g id="hourNums"></g>
-
-        <!-- Brand -->
-        <text x="150" y="108" text-anchor="middle" font-size="11" fill="#555" font-family="Arial" font-weight="bold">CASIO</text>
-        <text x="150" y="188" text-anchor="middle" font-size="8"  fill="#888" font-family="Arial">Quartz</text>
-
-        <!-- Hour hand -->
-        <line id="handHour"   x1="150" y1="150" x2="150" y2="90"
-          stroke="#111" stroke-width="7" stroke-linecap="round" />
-
-        <!-- Minute hand -->
-        <line id="handMinute" x1="150" y1="165" x2="150" y2="60"
-          stroke="#222" stroke-width="5" stroke-linecap="round" class="hand-minute" />
-
-        <!-- Second hand -->
-        <line id="handSecond" x1="150" y1="165" x2="150" y2="38"
-          stroke="#e03030" stroke-width="2" stroke-linecap="round" />
-        <circle cx="150" cy="150" r="3" fill="#e03030" />
-
-        <!-- Center dot -->
-        <circle cx="150" cy="150" r="4" fill="#111" />
-      </svg>
-    </div>
-  </div>
-
-  <!-- Right: time display -->
-  <div class="right">
-
-    <div class="time-box">
-      <input type="number" id="inputH" min="1" max="12" value="12" />
-      <span class="time-sep">:</span>
-      <input type="number" id="inputM" min="0" max="59" value="00" />
-    </div>
-    <div class="mode-toggle">
-      <button id="btnLearn" class="active">📚 Learn</button>
-      <button id="btnNow">⏱ Now</button>
-    </div>
-    <button class="btn-speak" id="btnSpeak">🔊 Speak</button>
-    <div id="voiceLabel" class="voice-label" style="display:none"></div>
-
-    <!-- Slideshow (built by JS) -->
-    <div class="deco-frame">
-      <div class="slide-track" id="slideTrack"></div>
-      <div class="deco-dots" id="slideDots"></div>
-    </div>
-  </div>
-
-<script>
-  // Fix height on mobile browsers (accounts for address bar + nav bar)
-  function fixHeight() {
-    document.body.style.height = window.innerHeight + 'px';
-  }
-  fixHeight();
-  window.addEventListener('resize', fixHeight);
-  window.addEventListener('orientationchange', () => setTimeout(fixHeight, 300));
-
-  const CX = 150, CY = 150;
-  const MINUTE_R = 122;
-  const HOUR_R   = 83;
-
-  // ── Tick marks ───────────────────────────────────────────────
-  const ticksG = document.getElementById('ticks');
-  for (let i = 0; i < 60; i++) {
-    const angle = (i * 6 - 90) * Math.PI / 180;
-    const isHour = i % 5 === 0;
-    const r1 = 124, r2 = isHour ? 112 : 118;
-    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-    line.setAttribute('x1', CX + r1 * Math.cos(angle));
-    line.setAttribute('y1', CY + r1 * Math.sin(angle));
-    line.setAttribute('x2', CX + r2 * Math.cos(angle));
-    line.setAttribute('y2', CY + r2 * Math.sin(angle));
-    line.setAttribute('stroke', '#888');
-    line.setAttribute('stroke-width', isHour ? 2.5 : 1);
-    ticksG.appendChild(line);
-  }
-
-  // ── Hour numbers ─────────────────────────────────────────────
-  const numsG = document.getElementById('hourNums');
-  for (let h = 1; h <= 12; h++) {
-    const angle = (h * 30 - 90) * Math.PI / 180;
-    const r = 100;
-    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
-    txt.setAttribute('x', CX + r * Math.cos(angle));
-    txt.setAttribute('y', CY + r * Math.sin(angle));
-    txt.setAttribute('text-anchor', 'middle');
-    txt.setAttribute('dominant-baseline', 'central');
-    txt.setAttribute('font-size', '18');
-    txt.setAttribute('font-family', 'Arial');
-    txt.setAttribute('font-weight', 'bold');
-    txt.setAttribute('fill', '#222');
-    txt.textContent = h;
-    numsG.appendChild(txt);
-  }
-
-  // ── Size clock wrapper to fit left panel ─────────────────────
-  let currentWS = 520;
-
-  function resizeClock() {
-    const left = document.querySelector('.left');
-    currentWS = Math.min(left.clientWidth, left.clientHeight) * 0.82;
-    document.getElementById('clockWrapper').style.setProperty('--cw', currentWS + 'px');
-    buildMinuteLabels(currentWS);
-  }
-
-  // ── Minute labels ────────────────────────────────────────────
-  function buildMinuteLabels(WS) {
-    document.querySelectorAll('.minute-label').forEach(el => el.remove());
-    const wrapper = document.getElementById('clockWrapper');
-    const labelRadius = WS / 2 + 2;
-    for (let m = 0; m < 60; m += 5) {
-      const angle = (m * 6 - 90) * Math.PI / 180;
-      const div = document.createElement('div');
-      div.className = 'minute-label';
-      div.style.left = (WS / 2 + labelRadius * Math.cos(angle)) + 'px';
-      div.style.top  = (WS / 2 + labelRadius * Math.sin(angle)) + 'px';
-      div.textContent = m;
-      wrapper.appendChild(div);
-    }
-  }
-
-  resizeClock();
-  window.addEventListener('resize', resizeClock);
-
-  // ── Hand state ───────────────────────────────────────────────
-  let minuteAngle  = -90; // -90 = 12 o'clock
-  let cumulativeDeg = 0;
-  let lastAngle    = -90;
-  let isDragging   = false;
-
-  const handHour       = document.getElementById('handHour');
-  const handMinute     = document.getElementById('handMinute');
-  const handSecond     = document.getElementById('handSecond');
-  const inputH         = document.getElementById('inputH');
-  const inputM         = document.getElementById('inputM');
-  const svgEl          = document.getElementById('clock');
-  const currentMinLabel = document.getElementById('currentMinLabel');
-
-  const SECOND_R = 112;
-
-  function setSecondHand(sec) {
-    const rad = (sec * 6 - 90) * Math.PI / 180;
-    handSecond.setAttribute('x1', CX - 18 * Math.cos(rad));
-    handSecond.setAttribute('y1', CY - 18 * Math.sin(rad));
-    handSecond.setAttribute('x2', CX + SECOND_R * Math.cos(rad));
-    handSecond.setAttribute('y2', CY + SECOND_R * Math.sin(rad));
-  }
-
-  // Tick second hand every second
-  let learnSecondInterval = null;
-
-  function startLearnSeconds() {
-    setSecondHand(new Date().getSeconds());
-    clearInterval(learnSecondInterval);
-    learnSecondInterval = setInterval(() => setSecondHand(new Date().getSeconds()), 1000);
-  }
-
-  function stopLearnSeconds() {
-    clearInterval(learnSecondInterval);
-  }
-
-  function setHands(minDeg) {
-    const minRad = minDeg * Math.PI / 180;
-    // Minute hand
-    handMinute.setAttribute('x1', CX - 15 * Math.cos(minRad));
-    handMinute.setAttribute('y1', CY - 15 * Math.sin(minRad));
-    handMinute.setAttribute('x2', CX + MINUTE_R * Math.cos(minRad));
-    handMinute.setAttribute('y2', CY + MINUTE_R * Math.sin(minRad));
-    // Hour hand
-    const hRad = ((minDeg + 90) / 12 - 90) * Math.PI / 180;
-    handHour.setAttribute('x1', CX - 12 * Math.cos(hRad));
-    handHour.setAttribute('y1', CY - 12 * Math.sin(hRad));
-    handHour.setAttribute('x2', CX + HOUR_R * Math.cos(hRad));
-    handHour.setAttribute('y2', CY + HOUR_R * Math.sin(hRad));
-
-    // Update number inputs
-    const totalMinutes = Math.round(((cumulativeDeg % 43200) + 43200) % 43200 / 6);
-    const displayH = Math.floor(totalMinutes / 60) % 12;
-    const displayM = totalMinutes % 60;
-    inputH.value = displayH === 0 ? 12 : displayH;
-    inputM.value = String(displayM).padStart(2, '0');
-
-    // Update current minute label position
-    const labelR = currentWS / 2 + 2;
-    const lx = currentWS / 2 + labelR * Math.cos(minRad);
-    const ly = currentWS / 2 + labelR * Math.sin(minRad);
-    currentMinLabel.style.left = lx + 'px';
-    currentMinLabel.style.top  = ly + 'px';
-    currentMinLabel.textContent = displayM;
-  }
-
-  function getSVGAngle(evt) {
-    const rect = svgEl.getBoundingClientRect();
-    const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
-    const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
-    const x = (clientX - rect.left) * (300 / rect.width)  - CX;
-    const y = (clientY - rect.top)  * (300 / rect.height) - CY;
-    return Math.atan2(y, x) * 180 / Math.PI;
-  }
-
-  function pointToSegmentDist(px, py, ax, ay, bx, by) {
-    const dx = bx - ax, dy = by - ay;
-    const t = Math.max(0, Math.min(1, ((px-ax)*dx + (py-ay)*dy) / (dx*dx + dy*dy)));
-    return Math.hypot(px - (ax + t*dx), py - (ay + t*dy));
-  }
-
-  function onStart(evt) {
-    if (mode === 'now') return; // disable drag in Now mode
-    const rect = svgEl.getBoundingClientRect();
-    const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
-    const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
-    const svgX = (clientX - rect.left) * (300 / rect.width);
-    const svgY = (clientY - rect.top)  * (300 / rect.height);
-
-    const minRad = minuteAngle * Math.PI / 180;
-    const tipX = CX + MINUTE_R * Math.cos(minRad);
-    const tipY = CY + MINUTE_R * Math.sin(minRad);
-    const handDist = pointToSegmentDist(svgX, svgY,
-      CX - 15*Math.cos(minRad), CY - 15*Math.sin(minRad), tipX, tipY);
-
-    if (handDist < 20 || Math.hypot(svgX - tipX, svgY - tipY) < 32) {
-      isDragging = true;
-      lastAngle = getSVGAngle(evt);
-      evt.preventDefault();
-    }
-  }
-
-  function onMove(evt) {
-    if (!isDragging) return;
-    evt.preventDefault();
-    const angle = getSVGAngle(evt);
-    let delta = angle - lastAngle;
-    if (delta >  180) delta -= 360;
-    if (delta < -180) delta += 360;
-    cumulativeDeg += delta;
-    minuteAngle   += delta;
-    lastAngle = angle;
-    setHands(minuteAngle);
-    saveTime();
-  }
-
-  function onEnd() { isDragging = false; }
-
-  svgEl.addEventListener('mousedown',  onStart);
-  window.addEventListener('mousemove', onMove);
-  window.addEventListener('mouseup',   onEnd);
-  svgEl.addEventListener('touchstart', onStart, { passive: false });
-  window.addEventListener('touchmove',  onMove,  { passive: false });
-  window.addEventListener('touchend',   onEnd);
-
-  // ── Sync number inputs → clock ──────────────────────────────
-  function syncFromInputs() {
-    const h = Math.min(12, Math.max(1, parseInt(inputH.value) || 12));
-    const m = Math.min(59, Math.max(0, parseInt(inputM.value) || 0));
-    inputH.value = h;
-    inputM.value = String(m).padStart(2, '0');
-    const totalMin = (h % 12) * 60 + m;
-    cumulativeDeg = totalMin * 6;
-    minuteAngle   = totalMin * 6 - 90;
-    setHands(minuteAngle);
-    saveTime();
-  }
-
-  inputH.addEventListener('change', syncFromInputs);
-  inputM.addEventListener('change', syncFromInputs);
-
-  function saveTime() {
-    localStorage.setItem('clock_time', JSON.stringify({ h: inputH.value, m: inputM.value }));
-  }
-
-  function loadTime() {
-    const saved = localStorage.getItem('clock_time');
-    if (!saved) return;
-    const { h, m } = JSON.parse(saved);
-    inputH.value = h;
-    inputM.value = m;
-    const totalMin = (parseInt(h) % 12) * 60 + parseInt(m);
-    cumulativeDeg = totalMin * 6;
-    minuteAngle   = totalMin * 6 - 90;
-  }
-
-  // Initial render
-  loadTime();
-  setHands(minuteAngle);
-  startLearnSeconds();
-
-  // ── Mode: Learn / Now ───────────────────────────────────────
-  let mode = 'learn';
-  let nowInterval = null;
-
-  const btnLearn = document.getElementById('btnLearn');
-  const btnNow   = document.getElementById('btnNow');
-
-  function applyNow() {
-    const now = new Date();
-    const h = now.getHours() % 12 || 12;
-    const m = now.getMinutes();
-    const s = now.getSeconds();
-    inputH.value = h;
-    inputM.value = String(m).padStart(2, '0');
-    const totalMin = (h % 12) * 60 + m;
-    cumulativeDeg = totalMin * 6;
-    minuteAngle   = totalMin * 6 - 90;
-    setHands(minuteAngle);
-    setSecondHand(s);
-    saveTime();
-  }
-
-  function setMode(m) {
-    mode = m;
-    btnLearn.classList.toggle('active', m === 'learn');
-    btnNow.classList.toggle('active',   m === 'now');
-    handMinute.style.cursor = m === 'now' ? 'default' : 'grab';
-
-    clearInterval(nowInterval);
-    if (m === 'now') {
-      applyNow();
-      nowInterval = setInterval(applyNow, 1000);
-    } else {
-      stopLearnSeconds();
-    }
-  }
-
-  btnLearn.addEventListener('click', () => setMode('learn'));
-  btnNow.addEventListener('click',   () => setMode('now'));
-
-  // ── Speak time in Japanese ───────────────────────────────────
-  const btnSpeak   = document.getElementById('btnSpeak');
-  const voiceLabel = document.getElementById('voiceLabel');
-
-  let jaVoices   = [];
-  let lastGender = 'male';
-
-  function loadJaVoices() {
-    jaVoices = window.speechSynthesis.getVoices()
-      .filter(v => v.lang.startsWith('ja'));
-    updateVoiceLabel();
-  }
-
-  function updateVoiceLabel() {
-    if (jaVoices.length >= 2) {
-      voiceLabel.textContent = `♀ ${jaVoices[0].name}  |  ♂ ${jaVoices[1].name}`;
-    } else if (jaVoices.length === 1) {
-      voiceLabel.textContent = `${jaVoices[0].name}  (pitch ♀/♂)`;
-    } else {
-      voiceLabel.textContent = 'ja-JP default  (pitch ♀/♂)';
-    }
-  }
-
-  loadJaVoices();
-  window.speechSynthesis.onvoiceschanged = loadJaVoices;
-
-  btnSpeak.addEventListener('click', () => {
-    const h = parseInt(inputH.value);
-    const m = parseInt(inputM.value);
-    const text = m === 0 ? `${h}時ちょうど` : `${h}時${m}分`;
-
-    lastGender = lastGender === 'female' ? 'male' : 'female';
-    const isMale = lastGender === 'male';
-
-    // Pick voice: if 2+ voices, alternate between them; if 1, use pitch trick
-    let voice = null;
-    if (jaVoices.length >= 2) {
-      voice = isMale ? jaVoices[1] : jaVoices[0];
-    } else if (jaVoices.length === 1) {
-      voice = jaVoices[0];
-    }
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang   = 'ja-JP';
-    utterance.rate   = 0.75;
-    utterance.volume = 1;
-    utterance.pitch  = isMale ? 0.6 : 1.0;
-    if (voice) utterance.voice = voice;
-
-    utterance.onstart = () => {
-      btnSpeak.classList.add('speaking');
-      voiceLabel.textContent = (isMale ? '♂ ' : '♀ ') + (voice ? voice.name : 'ja-JP default');
-    };
-    utterance.onend   = () => { btnSpeak.classList.remove('speaking'); updateVoiceLabel(); };
-    utterance.onerror = () => { btnSpeak.classList.remove('speaking'); };
-
-    window.speechSynthesis.speak(utterance);
-  });
-
-  // ── Slideshow ────────────────────────────────────────────────
-  const slideTrack = document.getElementById('slideTrack');
-  const slideDots  = document.getElementById('slideDots');
-  const SLIDES_DIR = 'assets/images/slides/';
-  let slides = [], dots = [], current = 0, slideTimer = null;
-
-  function goToSlide(idx) {
-    slides[current].classList.remove('active');
-    dots[current].classList.remove('active');
-    current = (idx + slides.length) % slides.length;
-    slides[current].classList.add('active');
-    dots[current].classList.add('active');
-  }
-
-  function buildSlideshow(files) {
-    slideTrack.innerHTML = '';
-    slideDots.innerHTML  = '';
-
-    files.forEach((file, i) => {
-      const img = document.createElement('img');
-      img.src = SLIDES_DIR + file;
-      img.alt = file;
-      if (i === 0) img.classList.add('active');
-      slideTrack.appendChild(img);
-
-      const dot = document.createElement('span');
-      if (i === 0) dot.classList.add('active');
-      dot.addEventListener('click', () => { clearInterval(slideTimer); goToSlide(i); startSlideTimer(); });
-      slideDots.appendChild(dot);
-    });
-
-    slides  = slideTrack.querySelectorAll('img');
-    dots    = slideDots.querySelectorAll('span');
-    current = 0;
-    startSlideTimer();
-  }
-
-  function startSlideTimer() {
-    clearInterval(slideTimer);
-    slideTimer = setInterval(() => goToSlide(current + 1), 3000);
-  }
-
-  fetch(SLIDES_DIR + 'manifest.json')
-    .then(r => r.json())
-    .then(files => buildSlideshow(files))
-    .catch(() => {
-      // fallback: probe images kim1…kim20 until 404
-      const tries = [], base = SLIDES_DIR;
-      let loaded = [];
-      let pending = 0;
-      for (let i = 1; i <= 20; i++) {
-        const name = `kim${i}.jpg`;
-        pending++;
-        const img = new Image();
-        img.onload  = () => { tries.push({ i, name }); if (--pending === 0) finish(); };
-        img.onerror = () => {                           if (--pending === 0) finish(); };
-        img.src = base + name;
+      .btn-speak:hover {
+        background: #1e4a6e;
       }
-      function finish() {
-        tries.sort((a, b) => a.i - b.i);
-        if (tries.length) buildSlideshow(tries.map(t => t.name));
+      .btn-speak:active {
+        transform: scale(0.96);
       }
-    });
-</script>
-</body>
+
+      .btn-speak.speaking {
+        background: #e05c2a;
+        animation: pulse 0.8s infinite alternate;
+      }
+
+      @keyframes pulse {
+        from {
+          box-shadow: 0 0 0 0 rgba(224, 92, 42, 0.5);
+        }
+        to {
+          box-shadow: 0 0 0 8px rgba(224, 92, 42, 0);
+        }
+      }
+
+      .voice-label {
+        font-size: 0.72rem;
+        color: #5a7a8a;
+        text-align: center;
+        min-height: 1em;
+        word-break: break-all;
+      }
+
+      /* ── Gear button ── */
+      .btn-gear {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        z-index: 400;
+        background: none;
+        border: none;
+        font-size: 1.6rem;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: opacity 0.15s, transform 0.35s;
+        line-height: 1;
+        padding: 4px;
+      }
+      .btn-gear:hover {
+        opacity: 1;
+      }
+      .btn-gear:active {
+        transform: rotate(90deg);
+      }
+
+      /* ── Settings popup ── */
+      .popup-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: 500;
+        align-items: center;
+        justify-content: center;
+      }
+      .popup-backdrop.open {
+        display: flex;
+      }
+
+      .popup {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        min-width: 260px;
+        max-width: 90vw;
+      }
+
+      .popup h3 {
+        font-size: 1rem;
+        color: #2c5f8a;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1a4a3a;
+      }
+
+      /* Toggle switch */
+      .toggle-switch {
+        position: relative;
+        width: 48px;
+        height: 26px;
+        flex-shrink: 0;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .toggle-slider {
+        position: absolute;
+        inset: 0;
+        background: #ccc;
+        border-radius: 26px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .toggle-slider::before {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        left: 3px;
+        top: 3px;
+        background: white;
+        border-radius: 50%;
+        transition: transform 0.2s;
+      }
+      .toggle-switch input:checked + .toggle-slider {
+        background: #2c5f8a;
+      }
+      .toggle-switch input:checked + .toggle-slider::before {
+        transform: translateX(22px);
+      }
+
+      .popup-close {
+        display: block;
+        width: 100%;
+        padding: 9px;
+        background: #2c5f8a;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .popup-close:hover {
+        background: #1e4a6e;
+      }
+
+      /* ── Portrait overlay ── */
+      .portrait-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: #2c5f8a;
+        z-index: 999;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 32px;
+      }
+
+      .portrait-overlay .rotate-icon {
+        font-size: 4rem;
+        animation: rotateHint 1.5s ease-in-out infinite;
+      }
+
+      @keyframes rotateHint {
+        0% {
+          transform: rotate(0deg);
+        }
+        50% {
+          transform: rotate(90deg);
+        }
+        100% {
+          transform: rotate(90deg);
+        }
+      }
+
+      /* ── Mobile landscape tweaks ── */
+      @media (max-width: 1280px) and (orientation: landscape) and (pointer: coarse) {
+        .right {
+          gap: 8px;
+          padding: 12px 8px 8px;
+        }
+
+        .right label {
+          font-size: 0.9rem;
+        }
+
+        .time-box input[type="number"] {
+          font-size: 1.8rem;
+          width: 42px;
+        }
+        .time-sep {
+          font-size: 1.8rem;
+        }
+
+        .mode-toggle button {
+          padding: 7px 0;
+          font-size: 0.82rem;
+        }
+        .btn-speak {
+          padding: 10px 16px;
+          font-size: 1rem;
+        }
+      }
+
+      /* ── Show overlay in portrait on mobile ── */
+      @media (max-width: 900px) and (orientation: portrait) {
+        .portrait-overlay {
+          display: flex;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Portrait warning -->
+    <div class="portrait-overlay">
+      <div class="rotate-icon">📱</div>
+      <div>Xoay ngang màn hình để sử dụng</div>
+    </div>
+
+    <!-- Left: clock -->
+    <div class="left">
+      <div class="clock-wrapper" id="clockWrapper">
+        <div class="current-minute-label" id="currentMinLabel">0</div>
+        <svg
+          id="clock"
+          viewBox="0 0 300 300"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <radialGradient id="metalGrad" cx="40%" cy="35%">
+              <stop offset="0%" stop-color="#d8d8d8" />
+              <stop offset="60%" stop-color="#a0a0a0" />
+              <stop offset="100%" stop-color="#787878" />
+            </radialGradient>
+          </defs>
+
+          <!-- Outer metallic ring -->
+          <circle cx="150" cy="150" r="148" fill="url(#metalGrad)" />
+          <!-- Clock face -->
+          <circle cx="150" cy="150" r="130" fill="#f5f0c8" />
+          <!-- Inner ring -->
+          <circle
+            cx="150"
+            cy="150"
+            r="130"
+            fill="none"
+            stroke="#d4c87a"
+            stroke-width="2"
+          />
+
+          <!-- Tick marks -->
+          <g id="ticks"></g>
+          <!-- Hour numbers -->
+          <g id="hourNums"></g>
+
+          <!-- Brand -->
+          <text
+            x="150"
+            y="108"
+            text-anchor="middle"
+            font-size="11"
+            fill="#555"
+            font-family="Arial"
+            font-weight="bold"
+          >
+            CASIO
+          </text>
+          <text
+            x="150"
+            y="188"
+            text-anchor="middle"
+            font-size="8"
+            fill="#888"
+            font-family="Arial"
+          >
+            Quartz
+          </text>
+
+          <!-- Hour hand -->
+          <line
+            id="handHour"
+            x1="150"
+            y1="150"
+            x2="150"
+            y2="90"
+            stroke="#111"
+            stroke-width="7"
+            stroke-linecap="round"
+          />
+
+          <!-- Minute hand -->
+          <line
+            id="handMinute"
+            x1="150"
+            y1="165"
+            x2="150"
+            y2="60"
+            stroke="#222"
+            stroke-width="5"
+            stroke-linecap="round"
+            class="hand-minute"
+          />
+
+          <!-- Second hand -->
+          <line
+            id="handSecond"
+            x1="150"
+            y1="165"
+            x2="150"
+            y2="38"
+            stroke="#e03030"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+          <circle cx="150" cy="150" r="3" fill="#e03030" />
+
+          <!-- Center dot -->
+          <circle cx="150" cy="150" r="4" fill="#111" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Right: time display -->
+    <div class="right">
+      <div class="time-box">
+        <input type="number" id="inputH" min="1" max="12" value="12" />
+        <span class="time-sep">:</span>
+        <input type="number" id="inputM" min="0" max="59" value="00" />
+      </div>
+      <div class="mode-toggle">
+        <button id="btnLearn" class="active">📚 Learn</button>
+        <button id="btnNow">⏱ Now</button>
+      </div>
+      <button class="btn-speak" id="btnSpeak">🔊 Speak</button>
+      <div id="voiceLabel" class="voice-label" style="display: none"></div>
+    </div>
+
+    <button class="btn-gear" id="btnGear" title="Cài đặt nhãn">⚙️</button>
+
+    <!-- Settings popup -->
+    <div class="popup-backdrop" id="popupBackdrop">
+      <div class="popup">
+        <h3>⚙️ Cài đặt</h3>
+        <div class="toggle-row">
+          <span>Hiện nhãn phút</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleLabels" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <button class="popup-close" id="popupClose">Đóng</button>
+      </div>
+    </div>
+
+    <script>
+      // Fix height on mobile browsers (accounts for address bar + nav bar)
+      function fixHeight() {
+        document.body.style.height = window.innerHeight + "px";
+      }
+      fixHeight();
+      window.addEventListener("resize", fixHeight);
+      window.addEventListener("orientationchange", () =>
+        setTimeout(fixHeight, 300)
+      );
+
+      const CX = 150,
+        CY = 150;
+      const MINUTE_R = 122;
+      const HOUR_R = 83;
+
+      // ── Tick marks ───────────────────────────────────────────────
+      const ticksG = document.getElementById("ticks");
+      for (let i = 0; i < 60; i++) {
+        const angle = ((i * 6 - 90) * Math.PI) / 180;
+        const isHour = i % 5 === 0;
+        const r1 = 124,
+          r2 = isHour ? 112 : 118;
+        const line = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "line"
+        );
+        line.setAttribute("x1", CX + r1 * Math.cos(angle));
+        line.setAttribute("y1", CY + r1 * Math.sin(angle));
+        line.setAttribute("x2", CX + r2 * Math.cos(angle));
+        line.setAttribute("y2", CY + r2 * Math.sin(angle));
+        line.setAttribute("stroke", "#888");
+        line.setAttribute("stroke-width", isHour ? 2.5 : 1);
+        ticksG.appendChild(line);
+      }
+
+      // ── Hour numbers ─────────────────────────────────────────────
+      const numsG = document.getElementById("hourNums");
+      for (let h = 1; h <= 12; h++) {
+        const angle = ((h * 30 - 90) * Math.PI) / 180;
+        const r = 100;
+        const txt = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "text"
+        );
+        txt.setAttribute("x", CX + r * Math.cos(angle));
+        txt.setAttribute("y", CY + r * Math.sin(angle));
+        txt.setAttribute("text-anchor", "middle");
+        txt.setAttribute("dominant-baseline", "central");
+        txt.setAttribute("font-size", "18");
+        txt.setAttribute("font-family", "Arial");
+        txt.setAttribute("font-weight", "bold");
+        txt.setAttribute("fill", "#222");
+        txt.textContent = h;
+        numsG.appendChild(txt);
+      }
+
+      // ── Label visibility (defined early, used by buildMinuteLabels) ─
+      const LABEL_VIS_KEY = "clock_labels_visible";
+
+      function labelsVisible() {
+        return localStorage.getItem(LABEL_VIS_KEY) !== "false";
+      }
+
+      function applyLabelVisibility() {
+        const show = labelsVisible();
+        document.querySelectorAll(".minute-label").forEach((el) => {
+          el.style.visibility = show ? "visible" : "hidden";
+        });
+        const toggle = document.getElementById("toggleLabels");
+        if (toggle) toggle.checked = show;
+      }
+
+      // ── Size clock wrapper to fit left panel ─────────────────────
+      let currentWS = 520;
+
+      function resizeClock() {
+        const left = document.querySelector(".left");
+        currentWS = Math.min(left.clientWidth, left.clientHeight) * 0.82;
+        document
+          .getElementById("clockWrapper")
+          .style.setProperty("--cw", currentWS + "px");
+        buildMinuteLabels(currentWS);
+      }
+
+      // ── Minute labels ────────────────────────────────────────────
+      function buildMinuteLabels(WS) {
+        document.querySelectorAll(".minute-label").forEach((el) => el.remove());
+        const wrapper = document.getElementById("clockWrapper");
+        const labelRadius = WS / 2 + 2;
+        for (let m = 0; m < 60; m += 5) {
+          const angle = ((m * 6 - 90) * Math.PI) / 180;
+          const div = document.createElement("div");
+          div.className = "minute-label";
+          div.dataset.min = m;
+          div.style.left = WS / 2 + labelRadius * Math.cos(angle) + "px";
+          div.style.top = WS / 2 + labelRadius * Math.sin(angle) + "px";
+          div.textContent = m;
+          wrapper.appendChild(div);
+        }
+        applyLabelVisibility();
+      }
+
+      resizeClock();
+      window.addEventListener("resize", resizeClock);
+
+      // ── Hand state ───────────────────────────────────────────────
+      let minuteAngle = -90; // -90 = 12 o'clock
+      let cumulativeDeg = 0;
+      let lastAngle = -90;
+      let isDragging = false;
+
+      const handHour = document.getElementById("handHour");
+      const handMinute = document.getElementById("handMinute");
+      const handSecond = document.getElementById("handSecond");
+      const inputH = document.getElementById("inputH");
+      const inputM = document.getElementById("inputM");
+      const svgEl = document.getElementById("clock");
+      const currentMinLabel = document.getElementById("currentMinLabel");
+
+      const SECOND_R = 112;
+
+      function setSecondHand(sec) {
+        const rad = ((sec * 6 - 90) * Math.PI) / 180;
+        handSecond.setAttribute("x1", CX - 18 * Math.cos(rad));
+        handSecond.setAttribute("y1", CY - 18 * Math.sin(rad));
+        handSecond.setAttribute("x2", CX + SECOND_R * Math.cos(rad));
+        handSecond.setAttribute("y2", CY + SECOND_R * Math.sin(rad));
+      }
+
+      // Tick second hand every second
+      let learnSecondInterval = null;
+
+      function startLearnSeconds() {
+        setSecondHand(new Date().getSeconds());
+        clearInterval(learnSecondInterval);
+        learnSecondInterval = setInterval(
+          () => setSecondHand(new Date().getSeconds()),
+          1000
+        );
+      }
+
+      function stopLearnSeconds() {
+        clearInterval(learnSecondInterval);
+      }
+
+      function setHands(minDeg) {
+        const minRad = (minDeg * Math.PI) / 180;
+        // Minute hand
+        handMinute.setAttribute("x1", CX - 15 * Math.cos(minRad));
+        handMinute.setAttribute("y1", CY - 15 * Math.sin(minRad));
+        handMinute.setAttribute("x2", CX + MINUTE_R * Math.cos(minRad));
+        handMinute.setAttribute("y2", CY + MINUTE_R * Math.sin(minRad));
+        // Hour hand
+        const hRad = (((minDeg + 90) / 12 - 90) * Math.PI) / 180;
+        handHour.setAttribute("x1", CX - 12 * Math.cos(hRad));
+        handHour.setAttribute("y1", CY - 12 * Math.sin(hRad));
+        handHour.setAttribute("x2", CX + HOUR_R * Math.cos(hRad));
+        handHour.setAttribute("y2", CY + HOUR_R * Math.sin(hRad));
+
+        // Update number inputs
+        const totalMinutes = Math.round(
+          (((cumulativeDeg % 43200) + 43200) % 43200) / 6
+        );
+        const displayH = Math.floor(totalMinutes / 60) % 12;
+        const displayM = totalMinutes % 60;
+        inputH.value = displayH === 0 ? 12 : displayH;
+        inputM.value = String(displayM).padStart(2, "0");
+
+        // Update current minute label position
+        const labelR = currentWS / 2 + 2;
+        const lx = currentWS / 2 + labelR * Math.cos(minRad);
+        const ly = currentWS / 2 + labelR * Math.sin(minRad);
+        currentMinLabel.style.left = lx + "px";
+        currentMinLabel.style.top = ly + "px";
+        currentMinLabel.textContent = displayM;
+      }
+
+      function getSVGAngle(evt) {
+        const rect = svgEl.getBoundingClientRect();
+        const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+        const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+        const x = (clientX - rect.left) * (300 / rect.width) - CX;
+        const y = (clientY - rect.top) * (300 / rect.height) - CY;
+        return (Math.atan2(y, x) * 180) / Math.PI;
+      }
+
+      function pointToSegmentDist(px, py, ax, ay, bx, by) {
+        const dx = bx - ax,
+          dy = by - ay;
+        const t = Math.max(
+          0,
+          Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy))
+        );
+        return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+      }
+
+      function onStart(evt) {
+        if (mode === "now") return; // disable drag in Now mode
+        const rect = svgEl.getBoundingClientRect();
+        const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+        const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+        const svgX = (clientX - rect.left) * (300 / rect.width);
+        const svgY = (clientY - rect.top) * (300 / rect.height);
+
+        const minRad = (minuteAngle * Math.PI) / 180;
+        const tipX = CX + MINUTE_R * Math.cos(minRad);
+        const tipY = CY + MINUTE_R * Math.sin(minRad);
+        const handDist = pointToSegmentDist(
+          svgX,
+          svgY,
+          CX - 15 * Math.cos(minRad),
+          CY - 15 * Math.sin(minRad),
+          tipX,
+          tipY
+        );
+
+        if (handDist < 20 || Math.hypot(svgX - tipX, svgY - tipY) < 32) {
+          isDragging = true;
+          lastAngle = getSVGAngle(evt);
+          evt.preventDefault();
+        }
+      }
+
+      function onMove(evt) {
+        if (!isDragging) return;
+        evt.preventDefault();
+        const angle = getSVGAngle(evt);
+        let delta = angle - lastAngle;
+        if (delta > 180) delta -= 360;
+        if (delta < -180) delta += 360;
+        cumulativeDeg += delta;
+        minuteAngle += delta;
+        lastAngle = angle;
+        setHands(minuteAngle);
+        saveTime();
+      }
+
+      function onEnd() {
+        isDragging = false;
+      }
+
+      svgEl.addEventListener("mousedown", onStart);
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onEnd);
+      svgEl.addEventListener("touchstart", onStart, { passive: false });
+      window.addEventListener("touchmove", onMove, { passive: false });
+      window.addEventListener("touchend", onEnd);
+
+      // ── Sync number inputs → clock ──────────────────────────────
+      function syncFromInputs() {
+        const h = Math.min(12, Math.max(1, parseInt(inputH.value) || 12));
+        const m = Math.min(59, Math.max(0, parseInt(inputM.value) || 0));
+        inputH.value = h;
+        inputM.value = String(m).padStart(2, "0");
+        const totalMin = (h % 12) * 60 + m;
+        cumulativeDeg = totalMin * 6;
+        minuteAngle = totalMin * 6 - 90;
+        setHands(minuteAngle);
+        saveTime();
+      }
+
+      inputH.addEventListener("change", syncFromInputs);
+      inputM.addEventListener("change", syncFromInputs);
+
+      function saveTime() {
+        localStorage.setItem(
+          "clock_time",
+          JSON.stringify({ h: inputH.value, m: inputM.value })
+        );
+      }
+
+      function loadTime() {
+        const saved = localStorage.getItem("clock_time");
+        if (!saved) return;
+        const { h, m } = JSON.parse(saved);
+        inputH.value = h;
+        inputM.value = m;
+        const totalMin = (parseInt(h) % 12) * 60 + parseInt(m);
+        cumulativeDeg = totalMin * 6;
+        minuteAngle = totalMin * 6 - 90;
+      }
+
+      // Initial render
+      loadTime();
+      setHands(minuteAngle);
+      startLearnSeconds();
+
+      // ── Mode: Learn / Now ───────────────────────────────────────
+      let mode = "learn";
+      let nowInterval = null;
+
+      const btnLearn = document.getElementById("btnLearn");
+      const btnNow = document.getElementById("btnNow");
+
+      function applyNow() {
+        const now = new Date();
+        const h = now.getHours() % 12 || 12;
+        const m = now.getMinutes();
+        const s = now.getSeconds();
+        inputH.value = h;
+        inputM.value = String(m).padStart(2, "0");
+        const totalMin = (h % 12) * 60 + m;
+        cumulativeDeg = totalMin * 6;
+        minuteAngle = totalMin * 6 - 90;
+        setHands(minuteAngle);
+        setSecondHand(s);
+        saveTime();
+      }
+
+      function setMode(m) {
+        mode = m;
+        btnLearn.classList.toggle("active", m === "learn");
+        btnNow.classList.toggle("active", m === "now");
+        handMinute.style.cursor = m === "now" ? "default" : "grab";
+
+        clearInterval(nowInterval);
+        if (m === "now") {
+          applyNow();
+          nowInterval = setInterval(applyNow, 1000);
+        } else {
+          stopLearnSeconds();
+        }
+      }
+
+      btnLearn.addEventListener("click", () => setMode("learn"));
+      btnNow.addEventListener("click", () => setMode("now"));
+
+      // ── Speak time in Japanese ───────────────────────────────────
+      const btnSpeak = document.getElementById("btnSpeak");
+      const voiceLabel = document.getElementById("voiceLabel");
+
+      let jaVoices = [];
+      let lastGender = "male";
+
+      function loadJaVoices() {
+        jaVoices = window.speechSynthesis
+          .getVoices()
+          .filter((v) => v.lang.startsWith("ja"));
+        updateVoiceLabel();
+      }
+
+      function updateVoiceLabel() {
+        if (jaVoices.length >= 2) {
+          voiceLabel.textContent = `♀ ${jaVoices[0].name}  |  ♂ ${jaVoices[1].name}`;
+        } else if (jaVoices.length === 1) {
+          voiceLabel.textContent = `${jaVoices[0].name}  (pitch ♀/♂)`;
+        } else {
+          voiceLabel.textContent = "ja-JP default  (pitch ♀/♂)";
+        }
+      }
+
+      loadJaVoices();
+      window.speechSynthesis.onvoiceschanged = loadJaVoices;
+
+      btnSpeak.addEventListener("click", () => {
+        const h = parseInt(inputH.value);
+        const m = parseInt(inputM.value);
+        const text = m === 0 ? `${h}時ちょうど` : `${h}時${m}分`;
+
+        lastGender = lastGender === "female" ? "male" : "female";
+        const isMale = lastGender === "male";
+
+        // Pick voice: if 2+ voices, alternate between them; if 1, use pitch trick
+        let voice = null;
+        if (jaVoices.length >= 2) {
+          voice = isMale ? jaVoices[1] : jaVoices[0];
+        } else if (jaVoices.length === 1) {
+          voice = jaVoices[0];
+        }
+
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "ja-JP";
+        utterance.rate = 0.75;
+        utterance.volume = 1;
+        utterance.pitch = isMale ? 0.6 : 1.0;
+        if (voice) utterance.voice = voice;
+
+        utterance.onstart = () => {
+          btnSpeak.classList.add("speaking");
+          voiceLabel.textContent =
+            (isMale ? "♂ " : "♀ ") + (voice ? voice.name : "ja-JP default");
+        };
+        utterance.onend = () => {
+          btnSpeak.classList.remove("speaking");
+          updateVoiceLabel();
+        };
+        utterance.onerror = () => {
+          btnSpeak.classList.remove("speaking");
+        };
+
+        window.speechSynthesis.speak(utterance);
+      });
+
+      // ── Label visibility settings ────────────────────────────────
+      document
+        .getElementById("toggleLabels")
+        .addEventListener("change", (e) => {
+          localStorage.setItem(LABEL_VIS_KEY, e.target.checked);
+          applyLabelVisibility();
+        });
+
+      document.getElementById("btnGear").addEventListener("click", () => {
+        document.getElementById("popupBackdrop").classList.add("open");
+      });
+
+      document.getElementById("popupClose").addEventListener("click", () => {
+        document.getElementById("popupBackdrop").classList.remove("open");
+      });
+
+      document
+        .getElementById("popupBackdrop")
+        .addEventListener("click", (e) => {
+          if (e.target === e.currentTarget)
+            document.getElementById("popupBackdrop").classList.remove("open");
+        });
+
+      applyLabelVisibility();
+    </script>
+  </body>
 </html>
