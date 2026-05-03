@@ -48,6 +48,28 @@
       user-select: none;
     }
 
+    .current-minute-label {
+      position: absolute;
+      min-width: 48px;
+      height: 34px;
+      padding: 0 8px;
+      background: #e85d2a;
+      border: 2px solid #c04010;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: white;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 8px rgba(232,93,42,0.5);
+      user-select: none;
+      pointer-events: none;
+      transition: left 0.05s, top 0.05s;
+      z-index: 2;
+    }
+
     svg#clock {
       width: 100%;
       height: 100%;
@@ -63,11 +85,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 20px;
+      justify-content: flex-start;
+      gap: 14px;
       background: #d0e9f5;
       border-left: 3px solid #b0d4e8;
-      padding: 24px 12px;
+      padding: 20px 12px 16px;
+      overflow: hidden;
     }
 
     .right label {
@@ -117,12 +140,41 @@
       margin-bottom: 4px;
     }
 
+    .mode-toggle {
+      display: flex;
+      border: 2px solid #7ab8d8;
+      border-radius: 12px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .mode-toggle button {
+      flex: 1;
+      padding: 10px 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      background: white;
+      color: #7ab8d8;
+    }
+
+    .mode-toggle button.active {
+      background: #2c5f8a;
+      color: white;
+    }
+
+    .mode-toggle button:first-child {
+      border-right: 1px solid #7ab8d8;
+    }
+
     .btn-speak {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 12px 18px;
-      font-size: 1rem;
+      padding: 14px 24px;
+      font-size: 1.2rem;
       font-weight: 700;
       color: white;
       background: #2c5f8a;
@@ -153,6 +205,68 @@
       min-height: 1em;
       word-break: break-all;
     }
+
+    .deco-frame {
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      padding: 8px;
+      background: white;
+      border-radius: 16px;
+      box-shadow:
+        0 0 0 3px #7ab8d8,
+        0 0 0 6px white,
+        0 0 0 9px #b0d4e8,
+        0 6px 20px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .slide-track {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .slide-track img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      opacity: 0;
+      transition: opacity 0.9s ease-in-out;
+    }
+
+    .slide-track img.active {
+      opacity: 1;
+    }
+
+    .deco-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding-top: 8px;
+      flex-shrink: 0;
+    }
+
+    .deco-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #b0d4e8;
+      transition: background 0.3s, transform 0.3s;
+      cursor: pointer;
+    }
+
+    .deco-dots span.active {
+      background: #2c5f8a;
+      transform: scale(1.3);
+    }
   </style>
 </head>
 <body>
@@ -160,6 +274,7 @@
   <!-- Left: clock -->
   <div class="left">
     <div class="clock-wrapper" id="clockWrapper">
+      <div class="current-minute-label" id="currentMinLabel">0</div>
       <svg id="clock" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <radialGradient id="metalGrad" cx="40%" cy="35%">
@@ -193,8 +308,13 @@
         <line id="handMinute" x1="150" y1="165" x2="150" y2="60"
           stroke="#222" stroke-width="5" stroke-linecap="round" class="hand-minute" />
 
+        <!-- Second hand -->
+        <line id="handSecond" x1="150" y1="165" x2="150" y2="38"
+          stroke="#e03030" stroke-width="2" stroke-linecap="round" />
+        <circle cx="150" cy="150" r="3" fill="#e03030" />
+
         <!-- Center dot -->
-        <circle cx="150" cy="150" r="5" fill="#111" />
+        <circle cx="150" cy="150" r="4" fill="#111" />
       </svg>
     </div>
   </div>
@@ -207,10 +327,18 @@
       <span class="time-sep">:</span>
       <input type="number" id="inputM" min="0" max="59" value="00" />
     </div>
-    <button class="btn-speak" id="btnSpeak">
-      🔊 Đọc tiếng Nhật
-    </button>
+    <div class="mode-toggle">
+      <button id="btnLearn" class="active">📚 Learn</button>
+      <button id="btnNow">⏱ Now</button>
+    </div>
+    <button class="btn-speak" id="btnSpeak">🔊 Speak</button>
     <div id="voiceLabel" class="voice-label"></div>
+
+    <!-- Slideshow (built by JS) -->
+    <div class="deco-frame">
+      <div class="slide-track" id="slideTrack"></div>
+      <div class="deco-dots" id="slideDots"></div>
+    </div>
   </div>
 
 <script>
@@ -253,11 +381,13 @@
   }
 
   // ── Size clock wrapper to fit left panel ─────────────────────
+  let currentWS = 520;
+
   function resizeClock() {
     const left = document.querySelector('.left');
-    const size = Math.min(left.clientWidth, left.clientHeight) * 0.82;
-    document.getElementById('clockWrapper').style.setProperty('--cw', size + 'px');
-    buildMinuteLabels(size);
+    currentWS = Math.min(left.clientWidth, left.clientHeight) * 0.82;
+    document.getElementById('clockWrapper').style.setProperty('--cw', currentWS + 'px');
+    buildMinuteLabels(currentWS);
   }
 
   // ── Minute labels ────────────────────────────────────────────
@@ -285,11 +415,36 @@
   let lastAngle    = -90;
   let isDragging   = false;
 
-  const handHour   = document.getElementById('handHour');
-  const handMinute = document.getElementById('handMinute');
-  const inputH     = document.getElementById('inputH');
-  const inputM     = document.getElementById('inputM');
-  const svgEl      = document.getElementById('clock');
+  const handHour       = document.getElementById('handHour');
+  const handMinute     = document.getElementById('handMinute');
+  const handSecond     = document.getElementById('handSecond');
+  const inputH         = document.getElementById('inputH');
+  const inputM         = document.getElementById('inputM');
+  const svgEl          = document.getElementById('clock');
+  const currentMinLabel = document.getElementById('currentMinLabel');
+
+  const SECOND_R = 112;
+
+  function setSecondHand(sec) {
+    const rad = (sec * 6 - 90) * Math.PI / 180;
+    handSecond.setAttribute('x1', CX - 18 * Math.cos(rad));
+    handSecond.setAttribute('y1', CY - 18 * Math.sin(rad));
+    handSecond.setAttribute('x2', CX + SECOND_R * Math.cos(rad));
+    handSecond.setAttribute('y2', CY + SECOND_R * Math.sin(rad));
+  }
+
+  // Tick second hand every second
+  let learnSecondInterval = null;
+
+  function startLearnSeconds() {
+    setSecondHand(new Date().getSeconds());
+    clearInterval(learnSecondInterval);
+    learnSecondInterval = setInterval(() => setSecondHand(new Date().getSeconds()), 1000);
+  }
+
+  function stopLearnSeconds() {
+    clearInterval(learnSecondInterval);
+  }
 
   function setHands(minDeg) {
     const minRad = minDeg * Math.PI / 180;
@@ -311,6 +466,14 @@
     const displayM = totalMinutes % 60;
     inputH.value = displayH === 0 ? 12 : displayH;
     inputM.value = String(displayM).padStart(2, '0');
+
+    // Update current minute label position
+    const labelR = currentWS / 2 + 2;
+    const lx = currentWS / 2 + labelR * Math.cos(minRad);
+    const ly = currentWS / 2 + labelR * Math.sin(minRad);
+    currentMinLabel.style.left = lx + 'px';
+    currentMinLabel.style.top  = ly + 'px';
+    currentMinLabel.textContent = displayM;
   }
 
   function getSVGAngle(evt) {
@@ -329,6 +492,7 @@
   }
 
   function onStart(evt) {
+    if (mode === 'now') return; // disable drag in Now mode
     const rect = svgEl.getBoundingClientRect();
     const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
     const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
@@ -405,43 +569,171 @@
   // Initial render
   loadTime();
   setHands(minuteAngle);
+  startLearnSeconds();
 
-  // ── Speak time in Japanese ───────────────────────────────────
-  const btnSpeak  = document.getElementById('btnSpeak');
-  const voiceLabel = document.getElementById('voiceLabel');
-  let jaVoices = [];
+  // ── Mode: Learn / Now ───────────────────────────────────────
+  let mode = 'learn';
+  let nowInterval = null;
 
-  let googleJaVoice = null;
+  const btnLearn = document.getElementById('btnLearn');
+  const btnNow   = document.getElementById('btnNow');
 
-  function loadGoogleJaVoice() {
-    googleJaVoice = window.speechSynthesis.getVoices()
-      .find(v => v.name === 'Google 日本語') || null;
+  function applyNow() {
+    const now = new Date();
+    const h = now.getHours() % 12 || 12;
+    const m = now.getMinutes();
+    const s = now.getSeconds();
+    inputH.value = h;
+    inputM.value = String(m).padStart(2, '0');
+    const totalMin = (h % 12) * 60 + m;
+    cumulativeDeg = totalMin * 6;
+    minuteAngle   = totalMin * 6 - 90;
+    setHands(minuteAngle);
+    setSecondHand(s);
+    saveTime();
   }
 
-  loadGoogleJaVoice();
-  window.speechSynthesis.onvoiceschanged = loadGoogleJaVoice;
+  function setMode(m) {
+    mode = m;
+    btnLearn.classList.toggle('active', m === 'learn');
+    btnNow.classList.toggle('active',   m === 'now');
+    handMinute.style.cursor = m === 'now' ? 'default' : 'grab';
+
+    clearInterval(nowInterval);
+    if (m === 'now') {
+      applyNow();
+      nowInterval = setInterval(applyNow, 1000);
+    } else {
+      stopLearnSeconds();
+    }
+  }
+
+  btnLearn.addEventListener('click', () => setMode('learn'));
+  btnNow.addEventListener('click',   () => setMode('now'));
+
+  // ── Speak time in Japanese ───────────────────────────────────
+  const btnSpeak   = document.getElementById('btnSpeak');
+  const voiceLabel = document.getElementById('voiceLabel');
+
+  let jaVoices   = [];
+  let lastGender = 'male';
+
+  function loadJaVoices() {
+    jaVoices = window.speechSynthesis.getVoices()
+      .filter(v => v.lang.startsWith('ja'));
+    updateVoiceLabel();
+  }
+
+  function updateVoiceLabel() {
+    if (jaVoices.length >= 2) {
+      voiceLabel.textContent = `♀ ${jaVoices[0].name}  |  ♂ ${jaVoices[1].name}`;
+    } else if (jaVoices.length === 1) {
+      voiceLabel.textContent = `${jaVoices[0].name}  (pitch ♀/♂)`;
+    } else {
+      voiceLabel.textContent = 'ja-JP default  (pitch ♀/♂)';
+    }
+  }
+
+  loadJaVoices();
+  window.speechSynthesis.onvoiceschanged = loadJaVoices;
 
   btnSpeak.addEventListener('click', () => {
     const h = parseInt(inputH.value);
     const m = parseInt(inputM.value);
     const text = m === 0 ? `${h}時ちょうど` : `${h}時${m}分`;
 
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ja-JP';
-    utterance.rate = 0.85;
-    utterance.pitch = 1;
+    lastGender = lastGender === 'female' ? 'male' : 'female';
+    const isMale = lastGender === 'male';
 
-    if (googleJaVoice) {
-      utterance.voice = googleJaVoice;
+    // Pick voice: if 2+ voices, alternate between them; if 1, use pitch trick
+    let voice = null;
+    if (jaVoices.length >= 2) {
+      voice = isMale ? jaVoices[1] : jaVoices[0];
+    } else if (jaVoices.length === 1) {
+      voice = jaVoices[0];
     }
 
-    utterance.onstart = () => btnSpeak.classList.add('speaking');
-    utterance.onend   = () => btnSpeak.classList.remove('speaking');
-    utterance.onerror = () => btnSpeak.classList.remove('speaking');
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang   = 'ja-JP';
+    utterance.rate   = 0.75;
+    utterance.volume = 1;
+    utterance.pitch  = isMale ? 0.6 : 1.0;
+    if (voice) utterance.voice = voice;
+
+    utterance.onstart = () => {
+      btnSpeak.classList.add('speaking');
+      voiceLabel.textContent = (isMale ? '♂ ' : '♀ ') + (voice ? voice.name : 'ja-JP default');
+    };
+    utterance.onend   = () => { btnSpeak.classList.remove('speaking'); updateVoiceLabel(); };
+    utterance.onerror = () => { btnSpeak.classList.remove('speaking'); };
 
     window.speechSynthesis.speak(utterance);
   });
+
+  // ── Slideshow ────────────────────────────────────────────────
+  const slideTrack = document.getElementById('slideTrack');
+  const slideDots  = document.getElementById('slideDots');
+  const SLIDES_DIR = 'assets/images/slides/';
+  let slides = [], dots = [], current = 0, slideTimer = null;
+
+  function goToSlide(idx) {
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = (idx + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+  }
+
+  function buildSlideshow(files) {
+    slideTrack.innerHTML = '';
+    slideDots.innerHTML  = '';
+
+    files.forEach((file, i) => {
+      const img = document.createElement('img');
+      img.src = SLIDES_DIR + file;
+      img.alt = file;
+      if (i === 0) img.classList.add('active');
+      slideTrack.appendChild(img);
+
+      const dot = document.createElement('span');
+      if (i === 0) dot.classList.add('active');
+      dot.addEventListener('click', () => { clearInterval(slideTimer); goToSlide(i); startSlideTimer(); });
+      slideDots.appendChild(dot);
+    });
+
+    slides  = slideTrack.querySelectorAll('img');
+    dots    = slideDots.querySelectorAll('span');
+    current = 0;
+    startSlideTimer();
+  }
+
+  function startSlideTimer() {
+    clearInterval(slideTimer);
+    slideTimer = setInterval(() => goToSlide(current + 1), 3000);
+  }
+
+  fetch(SLIDES_DIR + 'manifest.json')
+    .then(r => r.json())
+    .then(files => buildSlideshow(files))
+    .catch(() => {
+      // fallback: probe images kim1…kim20 until 404
+      const tries = [], base = SLIDES_DIR;
+      let loaded = [];
+      let pending = 0;
+      for (let i = 1; i <= 20; i++) {
+        const name = `kim${i}.jpg`;
+        pending++;
+        const img = new Image();
+        img.onload  = () => { tries.push({ i, name }); if (--pending === 0) finish(); };
+        img.onerror = () => {                           if (--pending === 0) finish(); };
+        img.src = base + name;
+      }
+      function finish() {
+        tries.sort((a, b) => a.i - b.i);
+        if (tries.length) buildSlideshow(tries.map(t => t.name));
+      }
+    });
 </script>
 </body>
 </html>
