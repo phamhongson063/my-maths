@@ -9,6 +9,7 @@
 
     body {
       height: 100vh;
+      height: 100dvh;
       display: flex;
       background: #e8f4f8;
       font-family: 'Segoe UI', sans-serif;
@@ -235,9 +236,13 @@
       100% { transform: rotate(90deg); }
     }
 
+    /* ── Hide slideshow on all mobile ── */
+    @media (max-width: 900px) {
+      .deco-frame { display: none; }
+    }
+
     /* ── Mobile landscape tweaks ── */
     @media (max-width: 900px) and (orientation: landscape) {
-      .deco-frame { display: none; }
 
       .right {
         gap: 8px;
