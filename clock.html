@@ -913,41 +913,72 @@
       loadJaVoices();
       window.speechSynthesis.onvoiceschanged = loadJaVoices;
 
-      let currentAudio = null;
+      let ttsAudioCtx = null;
+      let ttsSource   = null;
+
+      function getTTSUrl(text) {
+        return `https://translate.googleapis.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(text)}`;
+      }
+
+      function stopCurrent() {
+        try { if (ttsSource) { ttsSource.stop(); ttsSource = null; } } catch(_) {}
+        window.speechSynthesis.cancel();
+        btnSpeak.classList.remove("speaking");
+      }
+
+      async function speakViaWebAudio(text) {
+        // Fetch audio → decode → play via AudioContext (bypasses Samsung audio layer)
+        if (!ttsAudioCtx) {
+          ttsAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        await ttsAudioCtx.resume();
+
+        const resp = await fetch(getTTSUrl(text));
+        const buf  = await resp.arrayBuffer();
+        const decoded = await ttsAudioCtx.decodeAudioData(buf);
+
+        const src = ttsAudioCtx.createBufferSource();
+        src.buffer = decoded;
+        src.connect(ttsAudioCtx.destination);
+        ttsSource = src;
+
+        src.onended = () => { btnSpeak.classList.remove("speaking"); ttsSource = null; };
+        src.start(0);
+      }
+
+      function speakViaElement(text, onFail) {
+        const audio = new Audio(getTTSUrl(text));
+        audio.onended = () => btnSpeak.classList.remove("speaking");
+        audio.onerror = onFail;
+        audio.play().catch(onFail);
+      }
+
+      function speakViaSpeechAPI(text, isMale) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang   = "ja-JP";
+        utterance.rate   = 0.75;
+        utterance.volume = 1;
+        utterance.pitch  = isMale ? 0.6 : 1.0;
+        const voice = jaVoices.length >= 2 ? (isMale ? jaVoices[1] : jaVoices[0]) : jaVoices[0] || null;
+        if (voice) utterance.voice = voice;
+        utterance.onend   = () => btnSpeak.classList.remove("speaking");
+        utterance.onerror = () => btnSpeak.classList.remove("speaking");
+        window.speechSynthesis.resume();
+        setTimeout(() => window.speechSynthesis.speak(utterance), 50);
+      }
 
       function doSpeak(text, isMale) {
-        // Stop any current audio
-        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-        window.speechSynthesis.cancel();
-
+        stopCurrent();
         btnSpeak.classList.add("speaking");
 
-        // Primary: Google Translate TTS (reliable on Android Chrome)
-        const slow = isMale ? "&slow=true" : "";
-        const url  = `https://translate.googleapis.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(text)}`;
-        const audio = new Audio(url);
-        audio.volume = 1;
-        currentAudio = audio;
-
-        audio.onended = () => { btnSpeak.classList.remove("speaking"); currentAudio = null; };
-        audio.onerror = () => {
-          // Fallback: Web Speech API
-          currentAudio = null;
-          const utterance = new SpeechSynthesisUtterance(text);
-          utterance.lang   = "ja-JP";
-          utterance.rate   = 0.75;
-          utterance.volume = 1;
-          utterance.pitch  = isMale ? 0.6 : 1.0;
-          let voice = jaVoices.length >= 2 ? (isMale ? jaVoices[1] : jaVoices[0])
-                    : jaVoices[0] || null;
-          if (voice) utterance.voice = voice;
-          utterance.onend   = () => btnSpeak.classList.remove("speaking");
-          utterance.onerror = () => btnSpeak.classList.remove("speaking");
-          window.speechSynthesis.resume();
-          setTimeout(() => window.speechSynthesis.speak(utterance), 50);
-        };
-
-        audio.play().catch(() => audio.onerror());
+        // Method 1: WebAudio API (most direct, works on Samsung)
+        speakViaWebAudio(text).catch(() => {
+          // Method 2: Audio element
+          speakViaElement(text, () => {
+            // Method 3: Web Speech API
+            speakViaSpeechAPI(text, isMale);
+          });
+        });
       }
 
       btnSpeak.addEventListener("click", () => {
