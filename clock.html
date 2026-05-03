@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Tập xem giờ đồng hồ</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -206,6 +206,58 @@
       word-break: break-all;
     }
 
+    /* ── Portrait overlay ── */
+    .portrait-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #2c5f8a;
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 32px;
+    }
+
+    .portrait-overlay .rotate-icon {
+      font-size: 4rem;
+      animation: rotateHint 1.5s ease-in-out infinite;
+    }
+
+    @keyframes rotateHint {
+      0%   { transform: rotate(0deg); }
+      50%  { transform: rotate(90deg); }
+      100% { transform: rotate(90deg); }
+    }
+
+    /* ── Mobile landscape tweaks ── */
+    @media (max-width: 900px) and (orientation: landscape) {
+      .deco-frame { display: none; }
+
+      .right {
+        gap: 8px;
+        padding: 12px 8px 8px;
+      }
+
+      .right label { font-size: 0.9rem; }
+
+      .time-box input[type="number"] { font-size: 1.8rem; width: 42px; }
+      .time-sep { font-size: 1.8rem; }
+
+      .mode-toggle button { padding: 7px 0; font-size: 0.82rem; }
+      .btn-speak { padding: 10px 16px; font-size: 1rem; }
+    }
+
+    /* ── Show overlay in portrait on mobile ── */
+    @media (max-width: 900px) and (orientation: portrait) {
+      .portrait-overlay { display: flex; }
+    }
+
     .deco-frame {
       width: 100%;
       flex: 1;
@@ -271,6 +323,12 @@
 </head>
 <body>
 
+  <!-- Portrait warning -->
+  <div class="portrait-overlay">
+    <div class="rotate-icon">📱</div>
+    <div>Xoay ngang màn hình để sử dụng</div>
+  </div>
+
   <!-- Left: clock -->
   <div class="left">
     <div class="clock-wrapper" id="clockWrapper">
@@ -321,7 +379,7 @@
 
   <!-- Right: time display -->
   <div class="right">
-    <label>Mấy giờ?</label>
+
     <div class="time-box">
       <input type="number" id="inputH" min="1" max="12" value="12" />
       <span class="time-sep">:</span>
@@ -332,7 +390,7 @@
       <button id="btnNow">⏱ Now</button>
     </div>
     <button class="btn-speak" id="btnSpeak">🔊 Speak</button>
-    <div id="voiceLabel" class="voice-label"></div>
+    <div id="voiceLabel" class="voice-label" style="display:none"></div>
 
     <!-- Slideshow (built by JS) -->
     <div class="deco-frame">
