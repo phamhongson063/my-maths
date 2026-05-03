@@ -892,9 +892,11 @@
       let lastGender = "male";
 
       function loadJaVoices() {
-        jaVoices = window.speechSynthesis
-          .getVoices()
-          .filter((v) => v.lang.startsWith("ja"));
+        const all = window.speechSynthesis.getVoices();
+        jaVoices = all.filter((v) => v.lang.startsWith("ja"));
+        if (jaVoices.length === 0 && all.length === 0) {
+          setTimeout(loadJaVoices, 250);
+        }
         updateVoiceLabel();
       }
 
@@ -911,15 +913,9 @@
       loadJaVoices();
       window.speechSynthesis.onvoiceschanged = loadJaVoices;
 
-      btnSpeak.addEventListener("click", () => {
-        const h = parseInt(inputH.value);
-        const m = parseInt(inputM.value);
-        const text = m === 0 ? `${h}時ちょうど` : `${h}時${m}分`;
+      function doSpeak(text, isMale) {
+        window.speechSynthesis.cancel();
 
-        lastGender = lastGender === "female" ? "male" : "female";
-        const isMale = lastGender === "male";
-
-        // Pick voice: if 2+ voices, alternate between them; if 1, use pitch trick
         let voice = null;
         if (jaVoices.length >= 2) {
           voice = isMale ? jaVoices[1] : jaVoices[0];
@@ -927,12 +923,11 @@
           voice = jaVoices[0];
         }
 
-        window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "ja-JP";
-        utterance.rate = 0.75;
+        utterance.lang   = "ja-JP";
+        utterance.rate   = 0.75;
         utterance.volume = 1;
-        utterance.pitch = isMale ? 0.6 : 1.0;
+        utterance.pitch  = isMale ? 0.6 : 1.0;
         if (voice) utterance.voice = voice;
 
         utterance.onstart = () => {
@@ -940,15 +935,21 @@
           voiceLabel.textContent =
             (isMale ? "♂ " : "♀ ") + (voice ? voice.name : "ja-JP default");
         };
-        utterance.onend = () => {
-          btnSpeak.classList.remove("speaking");
-          updateVoiceLabel();
-        };
-        utterance.onerror = () => {
-          btnSpeak.classList.remove("speaking");
-        };
+        utterance.onend   = () => { btnSpeak.classList.remove("speaking"); updateVoiceLabel(); };
+        utterance.onerror = (e) => { btnSpeak.classList.remove("speaking"); };
 
-        window.speechSynthesis.speak(utterance);
+        // Android Chrome fix: resume + small delay before speak
+        window.speechSynthesis.resume();
+        setTimeout(() => window.speechSynthesis.speak(utterance), 50);
+      }
+
+      btnSpeak.addEventListener("click", () => {
+        if (jaVoices.length === 0) loadJaVoices();
+        const h = parseInt(inputH.value);
+        const m = parseInt(inputM.value);
+        const text = m === 0 ? `${h}時ちょうど` : `${h}時${m}分`;
+        lastGender = lastGender === "female" ? "male" : "female";
+        doSpeak(text, lastGender === "male");
       });
 
       // ── Label visibility settings ────────────────────────────────
