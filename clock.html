@@ -913,8 +913,22 @@
       loadJaVoices();
       window.speechSynthesis.onvoiceschanged = loadJaVoices;
 
+      // Unlock AudioContext on first interaction (Android requirement)
+      let audioCtx = null;
+      function unlockAudio() {
+        if (audioCtx) return Promise.resolve();
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const buf = audioCtx.createBuffer(1, 1, 22050);
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+        src.connect(audioCtx.destination);
+        src.start(0);
+        return audioCtx.resume();
+      }
+
       function doSpeak(text, isMale) {
         window.speechSynthesis.cancel();
+        window.speechSynthesis.resume();
 
         let voice = null;
         if (jaVoices.length >= 2) {
@@ -936,11 +950,12 @@
             (isMale ? "♂ " : "♀ ") + (voice ? voice.name : "ja-JP default");
         };
         utterance.onend   = () => { btnSpeak.classList.remove("speaking"); updateVoiceLabel(); };
-        utterance.onerror = (e) => { btnSpeak.classList.remove("speaking"); };
+        utterance.onerror = () => { btnSpeak.classList.remove("speaking"); };
 
-        // Android Chrome fix: resume + small delay before speak
-        window.speechSynthesis.resume();
-        setTimeout(() => window.speechSynthesis.speak(utterance), 50);
+        // Unlock audio channel first, then speak
+        unlockAudio().then(() => {
+          setTimeout(() => window.speechSynthesis.speak(utterance), 100);
+        });
       }
 
       btnSpeak.addEventListener("click", () => {
