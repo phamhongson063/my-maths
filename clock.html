@@ -913,49 +913,41 @@
       loadJaVoices();
       window.speechSynthesis.onvoiceschanged = loadJaVoices;
 
-      // Unlock AudioContext on first interaction (Android requirement)
-      let audioCtx = null;
-      function unlockAudio() {
-        if (audioCtx) return Promise.resolve();
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const buf = audioCtx.createBuffer(1, 1, 22050);
-        const src = audioCtx.createBufferSource();
-        src.buffer = buf;
-        src.connect(audioCtx.destination);
-        src.start(0);
-        return audioCtx.resume();
-      }
+      let currentAudio = null;
 
       function doSpeak(text, isMale) {
+        // Stop any current audio
+        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
         window.speechSynthesis.cancel();
-        window.speechSynthesis.resume();
 
-        let voice = null;
-        if (jaVoices.length >= 2) {
-          voice = isMale ? jaVoices[1] : jaVoices[0];
-        } else if (jaVoices.length === 1) {
-          voice = jaVoices[0];
-        }
+        btnSpeak.classList.add("speaking");
 
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang   = "ja-JP";
-        utterance.rate   = 0.75;
-        utterance.volume = 1;
-        utterance.pitch  = isMale ? 0.6 : 1.0;
-        if (voice) utterance.voice = voice;
+        // Primary: Google Translate TTS (reliable on Android Chrome)
+        const slow = isMale ? "&slow=true" : "";
+        const url  = `https://translate.googleapis.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(text)}`;
+        const audio = new Audio(url);
+        audio.volume = 1;
+        currentAudio = audio;
 
-        utterance.onstart = () => {
-          btnSpeak.classList.add("speaking");
-          voiceLabel.textContent =
-            (isMale ? "♂ " : "♀ ") + (voice ? voice.name : "ja-JP default");
+        audio.onended = () => { btnSpeak.classList.remove("speaking"); currentAudio = null; };
+        audio.onerror = () => {
+          // Fallback: Web Speech API
+          currentAudio = null;
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang   = "ja-JP";
+          utterance.rate   = 0.75;
+          utterance.volume = 1;
+          utterance.pitch  = isMale ? 0.6 : 1.0;
+          let voice = jaVoices.length >= 2 ? (isMale ? jaVoices[1] : jaVoices[0])
+                    : jaVoices[0] || null;
+          if (voice) utterance.voice = voice;
+          utterance.onend   = () => btnSpeak.classList.remove("speaking");
+          utterance.onerror = () => btnSpeak.classList.remove("speaking");
+          window.speechSynthesis.resume();
+          setTimeout(() => window.speechSynthesis.speak(utterance), 50);
         };
-        utterance.onend   = () => { btnSpeak.classList.remove("speaking"); updateVoiceLabel(); };
-        utterance.onerror = () => { btnSpeak.classList.remove("speaking"); };
 
-        // Unlock audio channel first, then speak
-        unlockAudio().then(() => {
-          setTimeout(() => window.speechSynthesis.speak(utterance), 100);
-        });
+        audio.play().catch(() => audio.onerror());
       }
 
       btnSpeak.addEventListener("click", () => {
